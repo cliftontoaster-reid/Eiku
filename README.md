@@ -14,22 +14,22 @@ Eiku is a lightweight 3D game engine written in pure C. Inspired by early softwa
 
 1. Clone the repository:
 
-    ```sh
-    git clone https://github.com/your-repo/eiku.git
-    cd eiku
-    ```
+   ```sh
+   git clone https://github.com/your-repo/eiku.git
+   cd eiku
+   ```
 
 2. Build the engine:
 
-    ```sh
-    make
-    ```
+   ```sh
+   make
+   ```
 
 3. Link against the static library or load the shared object in your project:
 
-    ```sh
-    cc main.c -Iinclude -Ltarget/x86_64-linux-gnu/eiku/lib -leiku -o mygame
-    ```
+   ```sh
+   cc main.c -Iinclude -Ltarget/x86_64-linux-gnu/eiku/lib -leiku -o mygame
+   ```
 
 ## Current Status
 
