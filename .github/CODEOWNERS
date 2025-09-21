@@ -1,0 +1,62 @@
+# Code Owners for Eiku Game Engine
+#
+# This file defines who is responsible for reviewing changes to specific parts
+# of the Eiku codebase. Code owners are automatically requested for review when
+# someone opens a pull request that modifies code in a directory they own.
+#
+# More information: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global fallback - applies to everything unless more specific rules below
+* @cliftontoaster-reid
+
+# Core engine architecture and foundational systems
+/include/core/ @cliftontoaster-reid
+/src/core/ @cliftontoaster-reid
+
+# Rendering system and graphics pipeline
+/include/render/ @cliftontoaster-reid
+/src/render/ @cliftontoaster-reid
+
+# Audio system and sound management
+/include/audio/ @cliftontoaster-reid
+/src/audio/ @cliftontoaster-reid
+
+# Input handling and device management
+/include/input/ @cliftontoaster-reid
+/src/input/ @cliftontoaster-reid
+
+# Mathematics library and algorithms
+/include/math/ @cliftontoaster-reid
+/src/math/ @cliftontoaster-reid
+
+# Resource management and file systems
+/include/res/ @cliftontoaster-reid
+/src/res/ @cliftontoaster-reid
+
+# Scene management and entity component system
+/include/scene/ @cliftontoaster-reid
+/src/scene/ @cliftontoaster-reid
+
+# Build system and configuration
+Makefile @cliftontoaster-reid
+/scripts/ @cliftontoaster-reid
+
+# Documentation and project metadata
+README.md @cliftontoaster-reid
+CHANGELOG.md @cliftontoaster-reid
+LICENCE.md @cliftontoaster-reid
+CODE_OF_CONDUCT.MD @cliftontoaster-reid
+
+# Development tooling and IDE configuration
+/.vscode/ @cliftontoaster-reid
+/.trunk/ @cliftontoaster-reid
+
+# Testing infrastructure
+/tests/ @cliftontoaster-reid
+/bench/ @cliftontoaster-reid
+
+# Examples and demonstration code
+/examples/ @cliftontoaster-reid
+
+# GitHub specific files and workflows
+/.github/ @cliftontoaster-reid

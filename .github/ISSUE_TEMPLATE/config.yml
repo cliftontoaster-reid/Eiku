@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discussions
+    url: https://github.com/cliftontoaster-reid/Eiku/discussions
+    about: For questions, ideas, and general discussion about Eiku
+  - name: Documentation
+    url: https://github.com/cliftontoaster-reid/Eiku/blob/main/README.md
+    about: Check the README and documentation before reporting issues
