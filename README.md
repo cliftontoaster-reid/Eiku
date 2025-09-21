@@ -2,7 +2,7 @@
 
 Eiku is a lightweight 3D game engine written in pure C. Inspired by early software renderers such as the DOOM engine, Eiku aims to provide a minimal yet extensible foundation for building first-person games and prototypes.
 
--## Features
+## Features
 
 - Software rendering pipeline with fixed-point math
 - Basic 3D scene management (entities, components, events)
