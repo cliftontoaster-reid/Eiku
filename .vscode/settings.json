@@ -1,5 +1,6 @@
 {
   "files.associations": {
     "*.h": "c"
-  }
+  },
+  "C_Cpp.default.compilerArgs": ["-I${workspaceFolder}/include"]
 }

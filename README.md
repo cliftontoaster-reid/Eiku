@@ -39,6 +39,23 @@ This project is in very early development. Core subsystems are being designed, a
 
 Contributions and feedback are welcome! Please open issues or pull requests to propose features and fixes.
 
+## Acknowledgments
+
+### MiniLibX Inspiration
+
+The X11 driver implementation in Eiku's core module is inspired by the excellent [MiniLibX (MLX)](https://github.com/42Paris/minilibx-linux) library developed by Olivier Crouzet and contributors at 42 School. While Eiku's implementation is original code written from scratch, we acknowledge:
+
+- The MiniLibX team for the clean API design and effective X11 integration patterns
+- The 42 School community for foundational graphics programming concepts
+- The original MiniLibX authors for demonstrating elegant approaches to cross-platform graphics
+
+**Important Note**: While inspired by MiniLibX's API design, Eiku's X11 driver is an independent implementation licensed under LGPL v3.0. No MiniLibX source code was copied or derived.
+
+### Other Acknowledgments
+
+- The DOOM engine for inspiring the software rendering approach
+- The open-source community for X11 documentation and examples
+
 ## Licence
 
-This project is licensed under the MIT Licence. See [LICENCE.md](LICENCE.md) for details.
+This project is licensed under the GNU Lesser General Public License v3.0. See [LICENCE.md](LICENCE.md) for details.

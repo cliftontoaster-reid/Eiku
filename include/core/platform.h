@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 19:23:11 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/21 19:31:58 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/21 22:12:50 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,11 @@
 # endif
 #else
 # define EIKU_API __attribute__((visibility("default")))
+#endif
+
+// helpers for internal functions
+#if defined(EIKU_PLATFORM_WINDOWS)
+# define EIKU_INT
+#else
+# define EIKU_INT __attribute__((visibility("hidden")))
 #endif

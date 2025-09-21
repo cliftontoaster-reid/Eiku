@@ -1,6 +1,6 @@
 CC      = clang
 CFLAGS  = -Wall -Wextra -Werror -g -std=gnu17 -O2 -pipe
-LDFLAGS = -lm
+LDFLAGS = -lm -lX11 -lXext -g -O2
 RM      ?= rm -rf
 
 NAME    = eiku
@@ -26,7 +26,6 @@ OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 DEP = $(patsubst $(SRC_DIR)/%.c,$(DEP_DIR)/%.d,$(SRC))
 
 SHARED      = $(abspath $(BIN_DIR)/$(NAME).so)
-SHARED_VER  = $(abspath $(BIN_DIR)/$(NAME).so.$(VERSION))
 STATIC      = $(abspath $(BIN_DIR)/lib$(NAME).a)
 INCLUDE_OUT = $(abspath $(BIN_DIR)/include)
 
@@ -63,7 +62,7 @@ uninstall:
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(@D) $(dir $(DEP_DIR)/$*.d)
-	$(CC) $(CFLAGS) -fPIC -MMD -MP -MF $(DEP_DIR)/$*.d -c $< -o $@ -I$(SRC_DIR)
+	$(CC) $(CFLAGS) -fPIC -MMD -MP -MF $(DEP_DIR)/$*.d -c $< -o $@ $(INCLUDE)
 
 # Rule to copy headers from include/ to BIN_DIR/include/
 $(INCLUDE_OUT)/%.h: $(INC_DIR)/%.h
@@ -72,11 +71,11 @@ $(INCLUDE_OUT)/%.h: $(INC_DIR)/%.h
 
 $(SHARED): $(OBJ)  $(INCLUDED_FILES)
 	@mkdir -p "$(@D)"
-	$(CC) -shared -Wl,-soname,"$(SHARED_VER)" -o "$@" $^ $(LDFLAGS)
+	$(CC) -shared -o "$@" $(OBJ) $(LDFLAGS)
 
 $(STATIC): $(OBJ) $(INCLUDED_FILES)
 	@mkdir -p "$(@D)"
-	ar rcs "$@" $^
+	ar rcs "$@" $(OBJ)
 
 dirs:
 	@$(foreach d, $(DIRS), mkdir -p "$(d)";)
