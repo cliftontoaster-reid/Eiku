@@ -130,7 +130,7 @@ $(CRITERION_INSTALL_DIR):
 
 test: criterion all $(TOBJ) $(TDEP)
 	@echo "Linking test units with Criterion..."
-	$(CC) -o $(BIN_DIR)/$(NAME).test $(TOBJ) -L$(BIN_DIR) -l$(NAME) -L$(CRITERION_INSTALL_DIR)/lib -lcriterion -lm -lpthread -ldl -I$(CRITERION_INSTALL_DIR)/include
+	$(CC) -o $(BIN_DIR)/$(NAME).test $(TOBJ) -L$(BIN_DIR) -l$(NAME) -L$(CRITERION_INSTALL_DIR)/lib -lcriterion $(LDFLAGS)
 
 run_tests: test
 	@echo "Running tests..."
