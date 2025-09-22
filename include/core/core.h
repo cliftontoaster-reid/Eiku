@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 18:21:57 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/21 22:12:50 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/22 16:39:19 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,8 @@ EIKU_API int eiku_destroy_window(t_eiku_context *ctx, t_eiku_window *win);
 EIKU_API int eiku_clear_window(t_eiku_context *ctx, t_eiku_window *win);
 
 // Window property functions
+EIKU_API bool eiku_window_set_title(t_eiku_context *ctx, t_eiku_window *win,
+	const char *title);
 EIKU_API int eiku_set_window_title(t_eiku_window *win, const char *title);
 EIKU_API int eiku_get_window_size(t_eiku_window *win, int *width, int *height);
 EIKU_API int eiku_resize_window(t_eiku_window *win, int width, int height);
