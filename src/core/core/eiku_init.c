@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 01:00:00 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/22 00:59:05 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/22 13:51:01 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,8 @@ EIKU_API t_eiku_context *eiku_init(void)
 	ctx->do_flush = true;
 	return (ctx);
 #else
-	// Non-Linux platforms not supported yet
+// Non-Linux platforms not supported yet
+# error "Eiku currently supports only Linux with X11."
 	return (NULL);
 #endif
 
