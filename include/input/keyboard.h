@@ -6,12 +6,13 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 18:21:51 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/24 01:02:34 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/24 01:57:29 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include <stdbool.h>
 #include <stddef.h>
 
 #include "core/core.h"
@@ -167,7 +168,13 @@ typedef struct s_eiku_keyboard_state {
   char text_buffer[EIKU_KEY_BUFFER_SIZE];
   // Length of text in buffer
   size_t text_length;
+  // Enable key repeats (default: false)
+  bool enable_key_repeats;
 } t_eiku_keyboard_state;
+
+/* Enable or disable key repeats. Default is false. */
+EIKU_API void eiku_keyboard_set_repeats(t_eiku_keyboard_state *state,
+                                        bool enable);
 
 /* Initialize keyboard state. Call once at startup. */
 EIKU_API int eiku_keyboard_init(t_eiku_context *ctx,
@@ -184,6 +191,12 @@ EIKU_API int eiku_key_is_pressed(t_eiku_keyboard_state *state, t_keycode key);
 
 /* Check if a key was just released this frame. */
 EIKU_API int eiku_key_is_released(t_eiku_keyboard_state *state, t_keycode key);
+
+/* Reset all key states to UP (e.g., on focus loss). */
+EIKU_API void eiku_keyboard_reset(t_eiku_keyboard_state *state);
+
+/* Clear the text input buffer. */
+EIKU_API void eiku_keyboard_clear_text(t_eiku_keyboard_state *state);
 
 /* Ends a loop by turning pressed keys into held keys and released keys into up
  * keys. */

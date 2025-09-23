@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   eiku_keyboard_init.c                               :+:      :+:    :+:   */
+/*   eiku_keyboard_set_repeats.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,18 +12,8 @@
 
 #include "input/keyboard.h"
 
-EIKU_API int eiku_keyboard_init(t_eiku_context *ctx,
-                                t_eiku_keyboard_state *state) {
-  if (!ctx || !state) return 0;
-
-  state->ctx = ctx;
-  for (size_t i = 0; i < EIKU_KEY_COUNT; ++i) {
-    state->keys[i] = EIKU_KEY_STATE_UP;
-  }
-  state->modifiers = EIKU_MOD_NONE;
-  state->text_length = 0;
-  state->text_buffer[0] = '\0';
-  state->enable_key_repeats = false;
-
-  return 1; /* Success */
+EIKU_API void eiku_keyboard_set_repeats(t_eiku_keyboard_state *state,
+                                        bool enable) {
+  if (!state) return;
+  state->enable_key_repeats = enable;
 }
