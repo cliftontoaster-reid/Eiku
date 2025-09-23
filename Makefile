@@ -31,7 +31,7 @@ endif
 
 # Project
 NAME    = eiku
-VERSION = 0.1.0
+VERSION = 0.1.0-exp.1
 PREFIX  ?= /usr/local
 DESTDIR ?=
 

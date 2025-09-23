@@ -6,7 +6,7 @@ This document outlines the planned development roadmap for the Eiku game engine,
 
 Eiku is a lightweight 3D game engine written in pure C, inspired by early software renderers like the DOOM engine. The goal is to provide a minimal yet extensible foundation for building first-person games and prototypes.
 
-## Current Status (v0.1.0)
+## Current Status (v0.1.0-exp.1)
 
 ### ✅ **Implemented Components**
 
@@ -44,7 +44,7 @@ Eiku is a lightweight 3D game engine written in pure C, inspired by early softwa
   - Reflection, refraction
   - Angle calculations
 
-#### 1.2 Matrix Mathematics
+#### 1.2 Matrix Mathematics (Pushed down as optional)
 
 - [ ] **Matrix3x3 and Matrix4x4 structures** (`include/math/matrix.h`)
   - Matrix creation and initialization
@@ -57,7 +57,7 @@ Eiku is a lightweight 3D game engine written in pure C, inspired by early softwa
   - Projection matrices (orthographic, perspective)
   - Model-view-projection pipeline
 
-#### 1.3 Quaternions
+#### 1.3 Quaternions (Pushed down as optional)
 
 - [ ] **Quaternion structure** (`include/math/quaternion.h`)
   - Creation from axis-angle, Euler angles
@@ -66,7 +66,7 @@ Eiku is a lightweight 3D game engine written in pure C, inspired by early softwa
   - SLERP (spherical linear interpolation)
   - Conversion to/from rotation matrices
 
-#### 1.4 Transform System
+#### 1.4 Transform System (Pushed down as optional)
 
 - [ ] **Transform structure** (`include/math/transform.h`)
   - Position, rotation, scale components

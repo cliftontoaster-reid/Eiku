@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 19:23:11 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/21 22:12:50 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/23 16:38:22 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #elif defined(__APPLE__) && defined(__MACH__)
 #include <TargetConditionals.h>
 #if TARGET_OS_IPHONE
-#define EIKU_PLATFORM_IOS
+#error "Support for iOS/tvOS is not planned!"
 #else
 #define EIKU_PLATFORM_MACOS
 #endif
