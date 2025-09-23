@@ -29,7 +29,7 @@ Eiku is a lightweight 3D game engine written in pure C, inspired by early softwa
 
 ### Phase 1: Foundation Math Library (High Priority)
 
-_Essential for all 3D operations_
+> Essential for all 3D operations
 
 #### 1.1 Vector Mathematics
 
@@ -76,7 +76,7 @@ _Essential for all 3D operations_
 
 ### Phase 2: Input System (High Priority)
 
-_Required for interactive applications_
+> Required for interactive applications
 
 #### 2.1 Keyboard Input
 
@@ -104,7 +104,7 @@ _Required for interactive applications_
 
 ### Phase 3: Resource Management (Medium Priority)
 
-_Foundation for asset loading_
+> Foundation for asset loading
 
 #### 3.1 File System
 
@@ -132,7 +132,7 @@ _Foundation for asset loading_
 
 ### Phase 4: Scene Management (Medium Priority)
 
-_Entity-Component-System architecture_
+> Entity-Component-System architecture
 
 #### 4.1 Entity System
 
@@ -168,7 +168,7 @@ _Entity-Component-System architecture_
 
 ### Phase 5: Software Renderer (High Priority)
 
-_Core 3D rendering capabilities_
+> Core 3D rendering capabilities
 
 #### 5.1 Renderer Foundation
 
@@ -213,7 +213,7 @@ _Core 3D rendering capabilities_
 
 ### Phase 6: Shader System (Medium Priority)
 
-_Programmable rendering pipeline_
+> Programmable rendering pipeline
 
 #### 6.1 Shader Framework
 
@@ -233,7 +233,7 @@ _Programmable rendering pipeline_
 
 ### Phase 7: Audio System (Lower Priority)
 
-_Sound and music support_
+> Sound and music support
 
 #### 7.1 Audio Foundation
 
@@ -269,7 +269,7 @@ _Sound and music support_
 
 ### Phase 8: Advanced Features (Future)
 
-_Extended capabilities_
+> Extended capabilities
 
 #### 8.1 Algorithms
 
@@ -297,7 +297,7 @@ _Extended capabilities_
 
 ### Phase 9: Platform Expansion (Future)
 
-_Multi-platform support_
+> Multi-platform support
 
 #### 9.1 Windows Support
 
