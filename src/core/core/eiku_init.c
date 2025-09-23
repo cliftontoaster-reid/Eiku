@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 01:00:00 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/22 13:51:01 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/23 14:51:58 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,13 @@ EIKU_API t_eiku_context *eiku_init(void)
 		XCloseDisplay(ctx->display);
 		free(ctx);
 		return (NULL);
+	}
+	// Create a colormap compatible with the selected visual
+	if (ctx->visual != DefaultVisual(ctx->display, ctx->screen))
+	{
+		ctx->cmap = XCreateColormap(ctx->display, ctx->root, ctx->visual,
+				AllocNone);
+		ctx->private_cmap = 1;
 	}
 	// Set up shared memory extension
 	if (eiku_int_deal_shm(ctx) != EIKU_SUCCESS)

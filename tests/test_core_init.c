@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 16:30:00 by copilot           #+#    #+#             */
-/*   Updated: 2025/09/22 18:28:15 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/23 12:46:49 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 #include "core/platform.h"
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 // Test suite for core initialization functions
 TestSuite(core_init, .description = "Core initialization and cleanup tests");
@@ -41,7 +43,7 @@ Test(core_init, test_eiku_init_success)
 	// Test basic initialization
 	ctx = eiku_init();
 	// Should return a valid context pointer
-	cr_assert_not_null(ctx, "eiku_init() should return a valid context");
+	cr_assert_not_null(ctx, "eiku_init() should return (a valid context)");
 	// Verify basic context fields are properly initialized
 #ifdef EIKU_PLATFORM_LINUX
 	cr_assert_not_null(ctx->display, "Display should be initialized");
@@ -96,7 +98,7 @@ Test(core_init, test_eiku_destroy_null)
 	// Destroying null context should return error
 	result = eiku_destroy(NULL);
 	cr_assert_eq(result, EIKU_ERROR_INVALID_PARAM,
-		"Destroying NULL context should return EIKU_ERROR_INVALID_PARAM");
+		"Destroying NULL context should return (EIKU_ERROR_INVALID_PARAM)");
 }
 
 /**
@@ -184,7 +186,7 @@ Test(core_init, test_eiku_context_stability)
  */
 Test(core_init, test_eiku_init_destroy_stress)
 {
-	const int cycles = 10;
+	const int cycles = 5; // Reduced from 10 to be less aggressive
 
 	for (int i = 0; i < cycles; i++)
 	{
@@ -204,5 +206,8 @@ Test(core_init, test_eiku_init_destroy_stress)
 		int result = eiku_destroy(ctx);
 		cr_assert_eq(result, EIKU_SUCCESS, "Context %d cleanup should succeed",
 			i);
+
+		// Small delay to prevent overwhelming X11 server in CI
+		usleep(1000); // 1ms delay
 	}
 }

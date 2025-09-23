@@ -44,6 +44,8 @@ Thumbs.db
 
 # Examples build artifacts
 examples/*/colourscreen
+examples/*/colourscreen_fast
+
 examples/*/*.o
 
 # Temporary files

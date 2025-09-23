@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 13:51:45 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/22 23:40:30 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/23 14:51:58 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 #include "core/platform.h"
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef EIKU_PLATFORM_LINUX
+# include <X11/Xlib.h>
+# include <X11/Xutil.h>
+#endif
 
 EIKU_API bool eiku_window_set_title(t_eiku_context *ctx, t_eiku_window *win,
 	const char *title)
@@ -52,9 +57,17 @@ EIKU_API t_eiku_window *eiku_new_window(t_eiku_context *ctx, int w, int h,
 	new_win->width = w;
 	new_win->height = h;
 	new_win->title = strdup(t);
-	new_win->window = XCreateSimpleWindow(ctx->display, ctx->root, 0, 0, w, h,
-			0, BlackPixel(ctx->display, ctx->screen), WhitePixel(ctx->display,
-				ctx->screen));
+
+	// Create window with the same visual as the context to avoid depth mismatches
+	XSetWindowAttributes attrs;
+	attrs.border_pixel = BlackPixel(ctx->display, ctx->screen);
+	attrs.background_pixel = WhitePixel(ctx->display, ctx->screen);
+	attrs.colormap = ctx->cmap;
+
+	new_win->window = XCreateWindow(ctx->display, ctx->root, 0, 0, w, h, 0,
+			ctx->depth, InputOutput, ctx->visual,
+			CWBorderPixel | CWBackPixel | CWColormap, &attrs);
+
 	if (!new_win->window)
 	{
 		free(new_win->title);

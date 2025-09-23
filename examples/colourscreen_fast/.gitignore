@@ -1,0 +1,11 @@
+# Ignore the compiled binary
+colourscreen_fast
+
+# Ignore temporary files
+*.o
+*.tmp
+*.log
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
