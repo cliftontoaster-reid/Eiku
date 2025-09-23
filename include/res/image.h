@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   image.h                                             :+:      :+:    :+:   */
+/*   image.h                                             :+:      :+:    :+: */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -23,48 +23,48 @@
 
 #pragma once
 
-#include "core/platform.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
+#include "core/platform.h"
+
 #ifdef EIKU_PLATFORM_LINUX
-# include <X11/Xlib.h>
-# include <X11/extensions/XShm.h>
+#include <X11/Xlib.h>
+#include <X11/extensions/XShm.h>
 #endif
 
 // Forward declarations for types defined in core.h
-typedef struct s_eiku_context	t_eiku_context;
-typedef struct s_eiku_window	t_eiku_window;
+typedef struct s_eiku_context t_eiku_context;
+typedef struct s_eiku_window t_eiku_window;
 
 // Image structure for X11 images
-typedef struct s_eiku_image
-{
-	XImage						*image;
-	Pixmap						pix;
-	GC							gc;
-	int							size_line;
-	int							bpp;
-	int							width;
-	int							height;
-	int							type;
-	int							format;
-	char						*data;
-	XShmSegmentInfo				shm;
-}								t_eiku_image;
+typedef struct s_eiku_image {
+  XImage *image;
+  Pixmap pix;
+  GC gc;
+  int size_line;
+  int bpp;
+  int width;
+  int height;
+  int type;
+  int format;
+  char *data;
+  XShmSegmentInfo shm;
+} t_eiku_image;
 
 // Image creation and destruction functions
 EIKU_API t_eiku_image *eiku_new_image(t_eiku_context *ctx, int width,
-	int height);
+                                      int height);
 EIKU_API int eiku_destroy_image(t_eiku_context *ctx, t_eiku_image *img);
 EIKU_API char *eiku_get_data_addr(t_eiku_image *img, int *bits_per_pixel,
-	int *size_line, int *endian);
+                                  int *size_line, int *endian);
 
 // Pixel manipulation functions
 EIKU_API int eiku_pixel_put(t_eiku_context *ctx, t_eiku_window *win, int x,
-	int y, int color);
+                            int y, int color);
 EIKU_API int eiku_put_image_to_window(t_eiku_context *ctx, t_eiku_window *win,
-	t_eiku_image *img, int x, int y);
+                                      t_eiku_image *img, int x, int y);
 // Image-only pixel write: put pixel directly into image buffer
 EIKU_API int eiku_image_pixel_put(t_eiku_image *img, int x, int y, int color);
 
@@ -73,6 +73,7 @@ EIKU_API int eiku_get_color_value(t_eiku_context *ctx, int color);
 
 // XPM image loading functions (optional - can be implemented later)
 EIKU_API t_eiku_image *eiku_xpm_file_to_image(t_eiku_context *ctx,
-	const char *filename, int *width, int *height);
+                                              const char *filename, int *width,
+                                              int *height);
 EIKU_API t_eiku_image *eiku_xpm_to_image(t_eiku_context *ctx, char **xpm_data,
-	int *width, int *height);
+                                         int *width, int *height);

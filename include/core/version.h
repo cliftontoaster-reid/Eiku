@@ -22,8 +22,12 @@
 #define EIKU_STR(x) _EIKU_STR(x)
 
 // full-string: "0.1.0"
-#define EIKU_VERSION_STRING EIKU_STR(EIKU_VERSION_MAJOR) "." EIKU_STR(EIKU_VERSION_MINOR) "." EIKU_STR(EIKU_VERSION_PATCH)
+#define EIKU_VERSION_STRING    \
+  EIKU_STR(EIKU_VERSION_MAJOR) \
+  "." EIKU_STR(EIKU_VERSION_MINOR) "." EIKU_STR(EIKU_VERSION_PATCH)
 
 // optional: encode to single integer for comparisons:
 // e.g. (major<<16)|(minor<<8)|patch
-#define EIKU_VERSION_CODE ((EIKU_VERSION_MAJOR << 16) | (EIKU_VERSION_MINOR << 8) | (EIKU_VERSION_PATCH))
+#define EIKU_VERSION_CODE                                   \
+  ((EIKU_VERSION_MAJOR << 16) | (EIKU_VERSION_MINOR << 8) | \
+   (EIKU_VERSION_PATCH))

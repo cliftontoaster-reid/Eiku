@@ -176,3 +176,8 @@ examples/%: all
 	$(MAKE) -C examples/$* all
 	@echo "Running example $* ..."
 	$(MAKE) -C examples/$* run
+
+format:
+	@echo "Formatting source files with clang-format..."
+	@find $(SRC_DIR) $(INC_DIR) $(TEST_DIR) -type f \( -name '*.c' -o -name '*.h' \) -exec clang-format -i {} +
+	@echo "Source files formatted."
