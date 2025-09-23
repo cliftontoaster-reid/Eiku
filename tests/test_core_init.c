@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 16:30:00 by copilot           #+#    #+#             */
-/*   Updated: 2025/09/22 16:39:12 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/22 18:28:15 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ Test(core_init, test_eiku_init_success)
 	// Test basic initialization
 	ctx = eiku_init();
 	// Should return a valid context pointer
-	cr_assert_not_null(ctx, "eiku_init() should return (a valid context"));
+	cr_assert_not_null(ctx, "eiku_init() should return a valid context");
 	// Verify basic context fields are properly initialized
 #ifdef EIKU_PLATFORM_LINUX
 	cr_assert_not_null(ctx->display, "Display should be initialized");
@@ -96,7 +96,7 @@ Test(core_init, test_eiku_destroy_null)
 	// Destroying null context should return error
 	result = eiku_destroy(NULL);
 	cr_assert_eq(result, EIKU_ERROR_INVALID_PARAM,
-		"Destroying NULL context should return (EIKU_ERROR_INVALID_PARAM"));
+		"Destroying NULL context should return EIKU_ERROR_INVALID_PARAM");
 }
 
 /**

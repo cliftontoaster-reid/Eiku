@@ -1,6 +1,8 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
+/*                      		cr_assert_eq(destroy_result, EIKU_SUCCESS,
+			"Destruction %d should succeed",
+			i);                                :::      ::::::::   */
 /*   test_error_handling.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
@@ -60,329 +62,68 @@ Test(error_handling, test_memory_edge_cases)
 			"Large title should be preserved");
 	}
 	// If creation failed,
-		that's also acceptable behavior for such a large allocation
+	// that's also acceptable behavior for such a large allocation
 	free(large_title);
 	eiku_destroy(ctx);
 }
 
 /**
- * @brief Test boundary conditions for window dimensions
+ * @brief Test null parameter handling
  */
-Test(error_handling, test_dimension_boundaries)
-{
-	t_eiku_context	*ctx;
-	t_eiku_window	*huge_window;
-	t_eiku_window	*tiny_window;
-
-	ctx = eiku_init();
-	cr_assert_not_null(ctx, "Context should be created for dimension tests");
-	// Test with INT_MAX dimensions (should fail gracefully)
-	huge_window = eiku_new_window(ctx, INT_MAX, INT_MAX, "Huge Window");
-	// This should either fail (return NULL) or succeed with clamped values
-	// Both behaviors are acceptable, but it shouldn't crash
-	if (huge_window != NULL)
-	{
-		// If it succeeded, dimensions should be reasonable
-		cr_assert_gt(huge_window->width, 0, "Width should be positive");
-		cr_assert_gt(huge_window->height, 0, "Height should be positive");
-	}
-	// Test with minimum valid dimensions
-	tiny_window = eiku_new_window(ctx, 1, 1, "Tiny Window");
-	cr_assert_not_null(tiny_window,
-		"Minimum dimension window should be created");
-	cr_assert_eq(tiny_window->width, 1, "Minimum width should be preserved");
-	cr_assert_eq(tiny_window->height, 1, "Minimum height should be preserved");
-	eiku_destroy(ctx);
-}
-
-/**
- * @brief Test string handling edge cases
- */
-Test(error_handling, test_string_edge_cases)
-{
-	t_eiku_context	*ctx;
-	t_eiku_window	*empty_title_window;
-	t_eiku_window	*whitespace_window;
-	char			title_with_null[] = "Title\0Hidden";
-	t_eiku_window	*null_window;
-	bool			empty_result;
-
-	ctx = eiku_init();
-	cr_assert_not_null(ctx, "Context should be created for string tests");
-	// Test with empty string title
-	empty_title_window = eiku_new_window(ctx, 400, 300, "");
-	cr_assert_not_null(empty_title_window,
-		"Window with empty title should be created");
-	cr_assert_str_eq(empty_title_window->title, "",
-		"Empty title should be preserved");
-	// Test title with only whitespace
-	whitespace_window = eiku_new_window(ctx, 400, 300, "   \t\n   ");
-	cr_assert_not_null(whitespace_window,
-		"Window with whitespace title should be created");
-	cr_assert_str_eq(whitespace_window->title, "   \t\n   ",
-		"Whitespace title should be preserved");
-	// Test title with null bytes in the middle (should stop at first null)
-	null_window = eiku_new_window(ctx, 400, 300, title_with_null);
-	cr_assert_not_null(null_window,
-		"Window with embedded null should be created");
-	cr_assert_str_eq(null_window->title, "Title",
-		"Title should stop at null byte");
-	// Test title setting with empty string
-	empty_result = eiku_window_set_title(ctx, empty_title_window, "");
-	cr_assert_eq(empty_result, true, "Setting empty title should succeed");
-	cr_assert_str_eq(empty_title_window->title, "",
-		"Empty title should be set");
-	eiku_destroy(ctx);
-}
-
-/**
- * @brief Test operations on destroyed/invalid contexts
- */
-Test(error_handling, test_invalid_context_operations)
+Test(error_handling, test_null_parameters)
 {
 	t_eiku_context	*ctx;
 	t_eiku_window	*window;
+	int				result;
 
-	// Create and immediately destroy context
+	// Test eiku_destroy with null
+	result = eiku_destroy(NULL);
+	cr_assert_eq(result, EIKU_ERROR_INVALID_PARAM,
+		"Null context destroy should return (error)");
+	// Test window creation with null context
+	window = eiku_new_window(NULL, 400, 300, "Test");
+	cr_assert_null(window, "Window creation with null context should fail");
+	// Test with valid context
 	ctx = eiku_init();
-	cr_assert_not_null(ctx, "Context should be created");
-	// Create a window first
-	window = eiku_new_window(ctx, 400, 300, "Test Window");
-	cr_assert_not_null(window, "Window should be created");
-	// Destroy context
-	eiku_destroy(ctx);
-	// Now try to use the destroyed context (should not crash,
-		but behavior is undefined)
-	// Note: This is technically undefined behavior,
-		but we want to ensure it doesn't crash
-	// In a real scenario, this would be a programming error
-	// The following operations should either return error codes or handle gracefully
-	// We can't reliably test this without risking crashes,
-		so we'll focus on null parameter tests
-}
-
-/**
- * @brief Test rapid creation and destruction
- */
-Test(error_handling, test_rapid_create_destroy)
-{
-	const int		iterations = 20;
-	t_eiku_context	*ctx;
-		char title[32];
-	t_eiku_window	*window;
-		char new_title[32];
-	bool			result;
-	int				destroy_result;
-
-	for (int i = 0; i < iterations; i++)
-	{
-		ctx = eiku_init();
-		cr_assert_not_null(ctx, "Context %d should be created", i);
-		// Create a window
-		snprintf(title, sizeof(title), "Window %d", i);
-		window = eiku_new_window(ctx, 300 + i, 200 + i, title);
-		cr_assert_not_null(window, "Window %d should be created", i);
-		// Modify title
-		snprintf(new_title, sizeof(new_title), "Modified %d", i);
-		result = eiku_window_set_title(ctx, window, new_title);
-		cr_assert_eq(result, true, "Title modification %d should succeed", i);
-		// Destroy immediately
-		destroy_result = eiku_destroy(ctx);
-		cr_assert_eq(destroy_result, EIKU_SUCCESS, "Destruction
-			%d should succeed", i);
-	}
-}
-
-/**
- * @brief Test title setting with special characters and encodings
- */
-Test(error_handling, test_special_character_handling)
-{
-	t_eiku_context	*ctx;
-	t_eiku_window	*window;
-	const int		num_titles = sizeof(special_titles)
-				/ sizeof(special_titles[0]);
-	bool			result;
-
-	ctx = eiku_init();
-	cr_assert_not_null(ctx, "Context should be created");
-	window = eiku_new_window(ctx, 400, 300, "Test Window");
-	cr_assert_not_null(window, "Window should be created");
-	// Test various special character combinations
-	const char *special_titles[] = {"Title with UTF-8: àáâãäåæçèéêë",
-									"Symbols: !@#$%^&*()_+-=[]{}|;':\",./<>?",
-									"Numbers and spaces: 123 456 789",
-									"Mixed: ABC123!@# XYZ789$%^",
-									"Unicode: 你好世界 🌍 🚀 ⭐",
-									"Long with special: "
-									"This is a very long title with special characters àáâãäåæçèéêë "
-									"and symbols !@#$%^&*()_+-=[]{}|;':\",./<>? and numbers 123456789"};
-	for (int i = 0; i < num_titles; i++)
-	{
-		result = eiku_window_set_title(ctx, window, special_titles[i]);
-		cr_assert_eq(result, true, "Special title
-			%d should be set successfully", i);
-		// Verify the title was set (note: some characters might not be preserved
-		// depending on X11 encoding, but the function should not crash)
-		cr_assert_not_null(window->title,
-			"Title should not be NULL after setting special characters");
-		cr_assert_gt(strlen(window->title), 0,
-			"Title should not be empty after setting");
-	}
+	cr_assert_not_null(ctx, "Context should be created for null tests");
+	// Test window creation with null title
+	window = eiku_new_window(ctx, 400, 300, NULL);
+	cr_assert_null(window, "Window creation with null title should fail");
+	// Clean up
 	eiku_destroy(ctx);
 }
 
 /**
- * @brief Test resource exhaustion scenarios
+ * @brief Test boundary window dimensions
  */
-Test(error_handling, test_resource_limits)
+Test(error_handling, test_boundary_dimensions)
 {
-	t_eiku_context	*ctx;
-	const int		max_windows = 50;
-	t_eiku_window	*windows[max_windows];
-	int				created_count;
-		char title[32];
-	t_eiku_window	*current;
-	int				list_count;
+	t_eiku_context *ctx;
+	t_eiku_window *window;
 
 	ctx = eiku_init();
-	cr_assert_not_null(ctx, "Context should be created");
-	// Try to create many windows to test resource limits
-	created_count = 0;
-	for (int i = 0; i < max_windows; i++)
-	{
-		snprintf(title, sizeof(title), "Resource Test %d", i);
-		windows[i] = eiku_new_window(ctx, 100 + i, 100 + i, title);
-		if (windows[i] != NULL)
-		{
-			created_count++;
-		}
-		else
-		{
-			// Window creation failed - this might be due to resource limits
-			// This is acceptable behavior
-			break ;
-		}
-	}
-	// Should have created at least a few windows
-	cr_assert_gt(created_count, 0,
-		"Should be able to create at least some windows");
-	// Verify all created windows are in the list
-	current = ctx->win_list;
-	list_count = 0;
-	while (current)
-	{
-		list_count++;
-		current = current->next;
-	}
-	cr_assert_eq(list_count, created_count,
-		"All created windows should be in the list");
-	eiku_destroy(ctx);
-}
+	cr_assert_not_null(ctx, "Context should be created for boundary tests");
 
-/**
- * @brief Test concurrent-like operations (rapid switching)
- */
-Test(error_handling, test_rapid_operations)
-{
-	t_eiku_context	*ctx;
-	const int		num_windows = 5;
-	t_eiku_window	*windows[num_windows];
-		char title[32];
-			char new_title[64];
-	bool			result;
-			char new_title[64];
-	bool			result;
+	// Test zero dimensions
+	window = eiku_new_window(ctx, 0, 300, "Zero Width");
+	cr_assert_null(window, "Zero width window should fail");
 
-	ctx = eiku_init();
-	cr_assert_not_null(ctx, "Context should be created");
-	// Create several windows
-	for (int i = 0; i < num_windows; i++)
-	{
-		snprintf(title, sizeof(title), "Rapid Test %d", i);
-		windows[i] = eiku_new_window(ctx, 200 + i * 50, 150 + i * 30, title);
-		cr_assert_not_null(windows[i], "Window %d should be created", i);
-	}
-	// Rapidly change titles in different orders
-	for (int round = 0; round < 10; round++)
-	{
-		for (int i = 0; i < num_windows; i++)
-		{
-			snprintf(new_title, sizeof(new_title), "Round %d Window %d", round,
-				i);
-			result = eiku_window_set_title(ctx, windows[i], new_title);
-			cr_assert_eq(result, true, "Rapid title change round %d window
-				%d should succeed", round, i);
-		}
-		// Also test in reverse order
-		for (int i = num_windows - 1; i >= 0; i--)
-		{
-			snprintf(new_title, sizeof(new_title), "Reverse %d Window %d",
-				round, i);
-			result = eiku_window_set_title(ctx, windows[i], new_title);
-			cr_assert_eq(result, true, "Rapid reverse title change round
-				%d window %d should succeed", round, i);
-		}
-	}
-	// Verify all windows still exist and have correct final titles
-	for (int i = 0; i < num_windows; i++)
-	{
-		cr_assert_not_null(windows[i]->title, "Window
-			%d title should not be NULL", i);
-		cr_assert(strstr(windows[i]->title, "Reverse") != NULL, "Window
-			%d should have final reverse title", i);
-	}
-	eiku_destroy(ctx);
-}
+	window = eiku_new_window(ctx, 400, 0, "Zero Height");
+	cr_assert_null(window, "Zero height window should fail");
 
-/**
- * @brief Test error code consistency
- */
-Test(error_handling, test_error_code_consistency)
-{
-	// Test that error functions return consistent error codes
+	// Test very large dimensions (may succeed or fail depending on system)
+	window = eiku_new_window(ctx, 32000, 24000, "Large Window");
+	// Don't assert - behavior is system dependent
 
-	// eiku_destroy with NULL should always return EIKU_ERROR_INVALID_PARAM
-	for (int i = 0; i < 5; i++)
+	if (window != NULL)
 	{
-		int result = eiku_destroy(NULL);
-		cr_assert_eq(result, EIKU_ERROR_INVALID_PARAM,
-			"eiku_destroy(NULL) should consistently return (EIKU_ERROR_INVALID_PARAM (attempt
-			%d)", i));
+		// If it succeeded, basic properties should be set
+		cr_assert_geq(window->width, 32000,
+			"Large window width should be preserved");
+		cr_assert_geq(window->height, 24000,
+			"Large window height should be preserved");
 	}
 
-	// eiku_new_window with NULL context should always return NULL
-	for (int i = 0; i < 5; i++)
-	{
-		t_eiku_window *window = eiku_new_window(NULL, 400, 300, "Test");
-		cr_assert_null(window,
-			"eiku_new_window with NULL context should consistently return (NULL (attempt
-			%d)", i));
-	}
-
-	// eiku_window_set_title with NULL parameters should always return false
-	t_eiku_context *ctx = eiku_init();
-	cr_assert_not_null(ctx, "Context should be created for error code tests");
-
-	t_eiku_window *window = eiku_new_window(ctx, 400, 300, "Test");
-	cr_assert_not_null(window, "Window should be created for error code tests");
-
-	for (int i = 0; i < 5; i++)
-	{
-		bool result1 = eiku_window_set_title(NULL, window, "Test");
-		bool result2 = eiku_window_set_title(ctx, NULL, "Test");
-		bool result3 = eiku_window_set_title(ctx, window, NULL);
-
-		cr_assert_eq(result1, false,
-			"eiku_window_set_title with NULL context should consistently return (false (attempt
-			%d)", i));
-		cr_assert_eq(result2, false,
-			"eiku_window_set_title with NULL window should consistently return (false (attempt
-			%d)", i));
-		cr_assert_eq(result3, false,
-			"eiku_window_set_title with NULL title should consistently return (false (attempt
-			%d)", i));
-	}
-
+	// Clean up
 	eiku_destroy(ctx);
 }

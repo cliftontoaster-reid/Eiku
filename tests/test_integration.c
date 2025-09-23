@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 17:00:00 by copilot           #+#    #+#             */
-/*   Updated: 2025/09/22 16:39:15 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/22 23:26:00 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,10 +134,10 @@ Test(integration, test_window_stress)
 	t_eiku_context	*ctx;
 	const int		num_windows = 5;
 	t_eiku_window	*windows[num_windows];
-		char title[64];
+	char			title[64];
 	t_eiku_window	*current;
 	int				count;
-			char new_title[64];
+	char			new_title[64];
 	bool			result;
 
 	ctx = eiku_init();
@@ -148,8 +148,11 @@ Test(integration, test_window_stress)
 		snprintf(title, sizeof(title), "Stress Test Window %d", i + 1);
 		windows[i] = eiku_new_window(ctx, 300 + i * 50, 200 + i * 30, title);
 		cr_assert_not_null(windows[i], "Window %d should be created", i + 1);
-		cr_assert_str_eq(windows[i]->title, title, "Window
-			%d title should be correct", i + 1);
+		cr_assert_str_eq(windows[i]->title,
+							title,
+							"Window"
+							"%d title should be correct",
+							i + 1);
 	}
 	// Verify all windows are in the list
 	current = ctx->win_list;
@@ -169,8 +172,12 @@ Test(integration, test_window_stress)
 			snprintf(new_title, sizeof(new_title), "Round %d - Window %d", round
 				+ 1, i + 1);
 			result = eiku_window_set_title(ctx, windows[i], new_title);
-			cr_assert_eq(result, true, "Title update round %d window
-				%d should succeed", round + 1, i + 1);
+			cr_assert_eq(result,
+							true,
+							"Title update round %d window"
+							"%d should succeed",
+							round + 1,
+							i + 1);
 			cr_assert_str_eq(windows[i]->title, new_title,
 				"Title should be updated correctly");
 		}
@@ -181,8 +188,10 @@ Test(integration, test_window_stress)
 	{
 		cr_assert_neq(windows[i]->window, 0, "X11 window %d should be valid", i
 			+ 1);
-		cr_assert_not_null(windows[i]->gc, "Graphics context
-			%d should be valid", i + 1);
+		cr_assert_not_null(windows[i]->gc,
+							"Graphics context"
+							"%d should be valid",
+							i + 1);
 	}
 	// Sync all operations
 	XSync(ctx->display, False);
@@ -235,9 +244,9 @@ Test(integration, test_rapid_operations)
 {
 	t_eiku_context	*ctx;
 	const int		operations = 10;
-		char title[32];
+	char			title[32];
 	t_eiku_window	*window;
-		char new_title[32];
+	char			new_title[32];
 	t_eiku_window	*current;
 	int				count;
 

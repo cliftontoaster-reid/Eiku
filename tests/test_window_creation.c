@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 16:45:00 by copilot           #+#    #+#             */
-/*   Updated: 2025/09/22 16:39:14 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/22 23:25:04 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ Test(window_creation, test_eiku_new_window_success)
 	window = eiku_new_window(ctx, width, height, title);
 	// Verify window was created successfully
 	cr_assert_not_null(window,
-		"eiku_new_window() should return (a valid window"));
+		"eiku_new_window() should return (a valid window)");
 	// Verify window properties
 	cr_assert_eq(window->width, width,
 		"Window width should match requested width");
@@ -92,7 +92,7 @@ Test(window_creation, test_eiku_new_window_null_context)
 	// Attempt to create window with null context
 	window = eiku_new_window(NULL, 800, 600, "Test");
 	cr_assert_null(window,
-		"eiku_new_window() with NULL context should return (NULL"));
+		"eiku_new_window() with NULL context should return (NULL)");
 }
 
 /**
@@ -110,19 +110,19 @@ Test(window_creation, test_eiku_new_window_invalid_dimensions)
 	// Test zero width
 	window1 = eiku_new_window(ctx, 0, 600, "Test");
 	cr_assert_null(window1,
-		"eiku_new_window() with zero width should return (NULL"));
+		"eiku_new_window() with zero width should return (NULL)");
 	// Test negative width
 	window2 = eiku_new_window(ctx, -100, 600, "Test");
 	cr_assert_null(window2,
-		"eiku_new_window() with negative width should return (NULL"));
+		"eiku_new_window() with negative width should return (NULL)");
 	// Test zero height
 	window3 = eiku_new_window(ctx, 800, 0, "Test");
 	cr_assert_null(window3,
-		"eiku_new_window() with zero height should return (NULL"));
+		"eiku_new_window() with zero height should return (NULL)");
 	// Test negative height
 	window4 = eiku_new_window(ctx, 800, -100, "Test");
 	cr_assert_null(window4,
-		"eiku_new_window() with negative height should return (NULL"));
+		"eiku_new_window() with negative height should return (NULL)");
 	// Clean up
 	eiku_destroy(ctx);
 }
@@ -139,7 +139,7 @@ Test(window_creation, test_eiku_new_window_null_title)
 	// Attempt to create window with null title
 	window = eiku_new_window(ctx, 800, 600, NULL);
 	cr_assert_null(window,
-		"eiku_new_window() with NULL title should return (NULL"));
+		"eiku_new_window() with NULL title should return (NULL)");
 	// Clean up
 	eiku_destroy(ctx);
 }
@@ -194,7 +194,7 @@ Test(window_creation, test_eiku_window_set_title_success)
 	// Set a new title
 	result = eiku_window_set_title(ctx, window, new_title);
 	cr_assert_eq(result, true,
-		"eiku_window_set_title() should return (true on success"));
+		"eiku_window_set_title() should return (true on success)");
 	cr_assert_not_null(window->title,
 		"Window title should not be NULL after setting");
 	cr_assert_str_eq(window->title, new_title,
@@ -220,15 +220,15 @@ Test(window_creation, test_eiku_window_set_title_null_params)
 	// Test with null context
 	result1 = eiku_window_set_title(NULL, window, "New Title");
 	cr_assert_eq(result1, false,
-		"eiku_window_set_title() with NULL context should return (false"));
+		"eiku_window_set_title() with NULL context should return (false)");
 	// Test with null window
 	result2 = eiku_window_set_title(ctx, NULL, "New Title");
 	cr_assert_eq(result2, false,
-		"eiku_window_set_title() with NULL window should return (false"));
+		"eiku_window_set_title() with NULL window should return (false)");
 	// Test with null title
 	result3 = eiku_window_set_title(ctx, window, NULL);
 	cr_assert_eq(result3, false,
-		"eiku_window_set_title() with NULL title should return (false"));
+		"eiku_window_set_title() with NULL title should return (false)");
 	// Clean up
 	eiku_destroy(ctx);
 }
