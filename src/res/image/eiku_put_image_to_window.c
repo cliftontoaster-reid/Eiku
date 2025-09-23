@@ -55,6 +55,7 @@ EIKU_API int eiku_get_color_value(t_eiku_context *ctx, int color)
 	int				gbits;
 	int				bshift;
 	int				bbits;
+	unsigned long	alpha_mask;
 
 	if (!ctx)
 		return (0);
@@ -76,6 +77,16 @@ EIKU_API int eiku_get_color_value(t_eiku_context *ctx, int color)
 		pixel |= ((g >> (8 - gbits)) << gshift);
 	if (bbits > 0)
 		pixel |= ((b >> (8 - bbits)) << bshift);
+	/* For 32-bit visuals,
+		set alpha to fully opaque if there's an alpha channel */
+	if (ctx->depth == 32)
+	{
+		alpha_mask = ~(ctx->visual->red_mask | ctx->visual->green_mask | ctx->visual->blue_mask);
+		if (alpha_mask != 0)
+		{
+			pixel |= alpha_mask; /* Set alpha bits to opaque */
+		}
+	}
 	return ((int)pixel);
 }
 

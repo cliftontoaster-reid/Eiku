@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 19:17:35 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/23 11:16:22 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/23 15:06:37 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,6 @@ EIKU_API int eiku_pixel_put(t_eiku_context *ctx, t_eiku_window *win, int x,
 	XDrawPoint(ctx->display, win->window, win->gc, x, y);
 	if (ctx->do_flush)
 		XFlush(ctx->display);
-	return (EIKU_SUCCESS);
 	return (EIKU_SUCCESS);
 # else
 	(void)ctx;

@@ -1,8 +1,35 @@
 CC      = clang
-CFLAGS  = -Wall -Wextra -Werror -g -std=gnu17 -O2 -pipe
-LDFLAGS = -lm -lX11 -lXext -g -O2
+CFLAGS  = -Wall -Wextra -Werror -std=gnu17 -pipe
+LDFLAGS = -lm -lX11 -lXext
 RM      ?= rm -rf
 
+MODE    ?= debug
+ifeq ($(MODE),release)
+	CFLAGS  += -O3 -g0 -D_FORTIFY_SOURCE=2
+	LDFLAGS += -Wl,-z,relro -Wl,-z,now
+else ifeq ($(MODE),debug)
+	CFLAGS  += -O0 -g3 -fstack-protector-strong -fstack-clash-protection -Warray-bounds -Wformat-security -fsanitize=address,undefined -fno-omit-frame-pointer
+	LDFLAGS += -fsanitize=address,undefined
+else
+	$(error "Invalid MODE specified: $(MODE). Use 'debug' or 'release'.")
+endif
+
+# Tools optimization
+## If 'zig cc' is available, use it as a drop-in replacement for 'clang'
+## If not check if clang is available, otherwise fallback to gcc
+ifneq (, $(shell which zig))
+	CC      = zig cc
+else ifneq (, $(shell which clang))
+	CC      = clang
+else
+	CC      = gcc
+endif
+## If mold is available, use it as a drop-in replacement for 'ld'
+ifneq (, $(shell which mold))
+	LDFLAGS += -fuse-ld=mold
+endif
+
+# Project
 NAME    = eiku
 VERSION = 0.1.0
 PREFIX  ?= /usr/local
