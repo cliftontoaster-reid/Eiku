@@ -112,7 +112,7 @@ jobs:
       - name: Build examples
         run: |
           echo "Building examples..."
-          make examples/colourscreen
+          make examples
           echo "Examples built successfully!"
 
       - name: Generate documentation

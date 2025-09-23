@@ -136,6 +136,13 @@ run_tests: test
 	@echo "Running tests..."
 	@LD_LIBRARY_PATH=$(BIN_DIR):$(CRITERION_INSTALL_DIR)/lib $(BIN_DIR)/$(NAME).test
 
+examples: all
+	@echo "Building all examples..."
+	@$(foreach dir, $(wildcard examples/*), \
+		echo "Building example $(dir) ..."; \
+		$(MAKE) -C $(dir) all; )
+	@echo "All examples built successfully!"
+
 # Run example by name examples/%
 examples/%: all
 	@echo "Building example $* ..."
