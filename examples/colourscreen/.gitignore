@@ -1,0 +1,24 @@
+# Build artifacts
+*.o
+*.so
+*.a
+colourscreen
+
+# Editor files
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Dependency files
+*.d

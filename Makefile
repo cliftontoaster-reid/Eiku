@@ -135,3 +135,10 @@ test: criterion all $(TOBJ) $(TDEP)
 run_tests: test
 	@echo "Running tests..."
 	@LD_LIBRARY_PATH=$(BIN_DIR):$(CRITERION_INSTALL_DIR)/lib $(BIN_DIR)/$(NAME).test
+
+# Run example by name examples/%
+examples/%: all
+	@echo "Building example $* ..."
+	$(MAKE) -C examples/$* all
+	@echo "Running example $* ..."
+	$(MAKE) -C examples/$* run

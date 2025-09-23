@@ -1,1 +1,51 @@
+# Build directories
 target/
+build/
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.test
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Editor files
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Dependency files
+*.d
+
+# Examples build artifacts
+examples/*/colourscreen
+examples/*/*.o
+
+# Temporary files
+*.tmp
+*.log
