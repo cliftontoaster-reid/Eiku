@@ -122,8 +122,9 @@ static void	draw_gradient_fast(t_eiku_image *image)
 				WINDOW_HEIGHT, (float)y / WINDOW_HEIGHT * 100.0f, pixels_drawn);
 		}
 	}
-	printf("✓ Gradient drawing complete!
-		%d total pixels drawn to image buffer\n", total_pixels);
+	printf("✓ Gradient drawing complete!"
+			"%d total pixels drawn to image buffer\n",
+			total_pixels);
 }
 
 /**
