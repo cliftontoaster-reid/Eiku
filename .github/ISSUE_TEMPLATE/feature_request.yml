@@ -1,7 +1,7 @@
 name: Feature Request
 description: Suggest a new feature or enhancement for Eiku
 title: "[Feature] "
-labels: ["enhancement"]
+labels: [enhancement]
 assignees:
   - cliftontoaster-reid
 
