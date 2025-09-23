@@ -28,11 +28,11 @@ jobs:
             compiler: gcc
             cc: gcc
             cxx: g++
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             compiler: clang
             cc: clang
             cxx: clang++
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             compiler: gcc
             cc: gcc
             cxx: g++
