@@ -20,6 +20,8 @@ It also adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Implement comprehensive GitHub Actions CI/CD pipeline with multi-compiler support, automated testing, static analysis, security scanning, and automated releases.
 - Add extensive test suite covering core initialization, window management, image operations, error handling, and integration scenarios.
 - Add CodeQL security analysis workflow with advanced C/C++ security scanning and dependency review.
+- **Implement complete vector mathematics library** (`include/math/vec.h`, `src/math/vec/`) with 2D/3D/4D vector types (int and float variants) supporting arithmetic operations, geometric calculations, linear interpolation, and utility functions - fulfilling Phase 1.1 of the development roadmap.
+- **Add professional build system enhancements** with debug/release build modes, compiler optimization (zig cc > clang > gcc priority), mold linker support, security hardening (\_FORTIFY_SOURCE, relro, now), and comprehensive sanitizers (address, undefined behavior).
 
 ### Changed
 
@@ -45,6 +47,9 @@ It also adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Add compile-time error for unsupported platforms in `eiku_init.c`.
 - Update issue template formatting and fix CI/CD workflow permissions.
 - Correct examples build target in CI and add missing Makefile target.
+- **Fix alpha channel handling in 32-bit X11 visuals** to ensure proper opaque image rendering across different display configurations.
+- **Remove duplicate return statement** in `eiku_pixel_put()` function that caused unreachable code.
+- **Update core initialization tests** to handle flexible colormap selection based on X11 visual capabilities.
 
 ### Security
 

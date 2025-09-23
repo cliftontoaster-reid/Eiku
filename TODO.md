@@ -33,13 +33,13 @@ Eiku is a lightweight 3D game engine written in pure C, inspired by early softwa
 
 #### 1.1 Vector Mathematics
 
-- [ ] **Vector2/3/4 structures** (`include/math/`)
+- [x] **Vector2/3/4 structures** (`include/math/`)
   - Basic vector types (int and float variants)
   - Addition, subtraction, multiplication, division
   - Dot product, cross product
   - Length, normalization
   - Distance calculations
-- [ ] **Vector utility functions**
+- [x] **Vector utility functions**
   - Linear interpolation (lerp)
   - Reflection, refraction
   - Angle calculations

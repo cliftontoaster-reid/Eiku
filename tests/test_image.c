@@ -384,20 +384,26 @@ Test(image_functions, test_eiku_get_color_value)
 	ctx = create_test_context();
 	// Test color conversion for basic colors
 	color_value = eiku_get_color_value(ctx, 0x000000); // Black
-	cr_assert_geq(color_value, 0,
-		"Black color conversion should be non-negative");
+	cr_assert(color_value == 0 || color_value == (int)0xFF000000,
+		"Black color should be 0 or 0xFF000000 and it is %x", color_value);
 	color_value = eiku_get_color_value(ctx, 0xFFFFFF); // White
-	cr_assert_geq(color_value, 0,
-		"White color conversion should be non-negative");
+	cr_assert_eq(color_value,
+					(int)0xFFFFFFFF,
+					"White color should be 0xFFFFFFFF, got"
+					"%x",
+					color_value);
 	color_value = eiku_get_color_value(ctx, 0xFF0000); // Red
-	cr_assert_geq(color_value, 0,
-		"Red color conversion should be non-negative");
+	cr_assert_geq(color_value, (int)0xFFFF0000,
+		"Red color conversion should be non-negative and it is %x",
+		color_value);
 	color_value = eiku_get_color_value(ctx, 0x00FF00); // Green
-	cr_assert_geq(color_value, 0,
-		"Green color conversion should be non-negative");
+	cr_assert_geq(color_value, (int)0xFF00FF00,
+		"Green color conversion should be non-negative and it is %x",
+		color_value);
 	color_value = eiku_get_color_value(ctx, 0x0000FF); // Blue
-	cr_assert_geq(color_value, 0,
-		"Blue color conversion should be non-negative");
+	cr_assert_geq(color_value, (int)0xFF0000FF,
+		"Blue color conversion should be non-negative and it is %x",
+		color_value);
 	// Test with null context
 	color_value = eiku_get_color_value(NULL, 0xFF0000);
 	cr_assert_eq(color_value, 0,
