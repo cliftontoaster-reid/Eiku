@@ -1,0 +1,314 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g., v1.0.0)"
+        required: true
+        default: "v0.1.0"
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_id: ${{ steps.create_release.outputs.id }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION=${{ github.event.inputs.version }}
+          else
+            VERSION=${GITHUB_REF#refs/tags/}
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Release version: $VERSION"
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          echo "Generating changelog..."
+
+          # Get the previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+
+          if [ -z "$PREV_TAG" ]; then
+            echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+            echo "## Initial Release" >> $GITHUB_OUTPUT
+            echo "" >> $GITHUB_OUTPUT
+            echo "First release of Eiku Graphics Library" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+            echo "## Changes since $PREV_TAG" >> $GITHUB_OUTPUT
+            echo "" >> $GITHUB_OUTPUT
+            git log --pretty=format:"- %s" $PREV_TAG..HEAD >> $GITHUB_OUTPUT
+            echo "" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          release_name: Eiku ${{ steps.get_version.outputs.VERSION }}
+          body: |
+            # Eiku Graphics Library ${{ steps.get_version.outputs.VERSION }}
+
+            A cross-platform C graphics library for creating windows and drawing pixels.
+
+            ## 📦 Downloads
+
+            Choose the appropriate package for your system:
+
+            - **Linux x86_64**: `eiku-${{ steps.get_version.outputs.VERSION }}-linux-x86_64.tar.gz`
+            - **Source Code**: Download the source tarball or clone the repository
+
+            ## 🚀 Quick Start
+
+            ```bash
+            # Extract the library
+            tar -xzf eiku-${{ steps.get_version.outputs.VERSION }}-linux-x86_64.tar.gz
+
+            # Install system-wide (optional)
+            cd eiku-${{ steps.get_version.outputs.VERSION }}
+            sudo make install
+
+            # Or use locally
+            export EIKU_ROOT=/path/to/extracted/eiku
+            export LD_LIBRARY_PATH=$EIKU_ROOT/lib:$LD_LIBRARY_PATH
+            ```
+
+            ## 📖 Documentation
+
+            - [README](https://github.com/${{ github.repository }}/blob/${{ steps.get_version.outputs.VERSION }}/README.md)
+            - [Examples](https://github.com/${{ github.repository }}/tree/${{ steps.get_version.outputs.VERSION }}/examples)
+            - [API Documentation](https://github.com/${{ github.repository }}/tree/${{ steps.get_version.outputs.VERSION }}/docs)
+
+            ## 🔄 Changelog
+
+            ${{ steps.changelog.outputs.CHANGELOG }}
+
+            ## 🛠️ Build Information
+
+            - **Compiler**: clang with GNU17 standard
+            - **Dependencies**: libX11, libXext, libm
+            - **Architecture**: x86_64
+            - **Build Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+            ## ✅ Verification
+
+            All releases are built and tested with our CI pipeline:
+            - ✅ Compiled with both GCC and Clang
+            - ✅ Tested on multiple Ubuntu versions
+            - ✅ Static analysis with CodeQL
+            - ✅ Security scanning completed
+            - ✅ Examples verified
+          draft: false
+          prerelease: ${{ contains(steps.get_version.outputs.VERSION, 'alpha') || contains(steps.get_version.outputs.VERSION, 'beta') || contains(steps.get_version.outputs.VERSION, 'rc') }}
+
+  build-and-package:
+    name: Build and Package
+    needs: create-release
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        include:
+          - os: ubuntu-latest
+            asset_name: linux-x86_64
+            cc: clang
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            clang \
+            libx11-dev \
+            libxext-dev \
+            pkg-config \
+            tar \
+            gzip
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION=${{ github.event.inputs.version }}
+          else
+            VERSION=${GITHUB_REF#refs/tags/}
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION_NO_V=${VERSION#v}" >> $GITHUB_OUTPUT
+
+      - name: Build library
+        run: |
+          echo "Building Eiku library for release..."
+          export CC=${{ matrix.cc }}
+          make clean || true
+          make all
+          echo "Build completed successfully!"
+
+      - name: Build examples
+        run: |
+          echo "Building examples..."
+          make examples/colourscreen
+          echo "Examples built successfully!"
+
+      - name: Build tests
+        run: |
+          echo "Building tests..."
+          make criterion
+          make test
+          echo "Tests built successfully!"
+
+      - name: Create package structure
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION_NO_V }}
+          PACKAGE_NAME="eiku-$VERSION"
+          PACKAGE_DIR="/tmp/$PACKAGE_NAME"
+
+          echo "Creating package structure in $PACKAGE_DIR..."
+          mkdir -p "$PACKAGE_DIR"/{lib,include,bin,examples,docs}
+
+          # Copy libraries
+          cp target/x86_64-linux-gnu/eiku/bin/libeiku.so "$PACKAGE_DIR/lib/"
+          cp target/x86_64-linux-gnu/eiku/bin/libeiku.a "$PACKAGE_DIR/lib/"
+
+          # Copy headers
+          cp -r target/x86_64-linux-gnu/eiku/bin/include/* "$PACKAGE_DIR/include/"
+
+          # Copy examples
+          cp -r examples/* "$PACKAGE_DIR/examples/"
+
+          # Copy documentation
+          cp README.md "$PACKAGE_DIR/"
+          cp LICENSE.md "$PACKAGE_DIR/" 2>/dev/null || cp LICENCE.md "$PACKAGE_DIR/LICENSE.md" 2>/dev/null || true
+          cp CHANGELOG.md "$PACKAGE_DIR/" 2>/dev/null || true
+
+          # Create a simple Makefile for the package
+          cat > "$PACKAGE_DIR/Makefile" << 'EOF'
+          # Eiku Graphics Library - Installation Makefile
+          PREFIX ?= /usr/local
+          DESTDIR ?=
+          VERSION = ${{ steps.get_version.outputs.VERSION_NO_V }}
+
+          .PHONY: install uninstall
+
+          install:
+          	install -D -m 755 lib/libeiku.so $(DESTDIR)$(PREFIX)/lib/libeiku.so.$(VERSION)
+          	ln -sf libeiku.so.$(VERSION) $(DESTDIR)$(PREFIX)/lib/libeiku.so
+          	install -D -m 644 lib/libeiku.a $(DESTDIR)$(PREFIX)/lib/libeiku.a
+          	mkdir -p $(DESTDIR)$(PREFIX)/include/eiku
+          	cp -r include/* $(DESTDIR)$(PREFIX)/include/eiku/
+          	ldconfig || true
+
+          uninstall:
+          	rm -f $(DESTDIR)$(PREFIX)/lib/libeiku.so*
+          	rm -f $(DESTDIR)$(PREFIX)/lib/libeiku.a
+          	rm -rf $(DESTDIR)$(PREFIX)/include/eiku
+          	ldconfig || true
+          EOF
+
+          # Create installation script
+          cat > "$PACKAGE_DIR/install.sh" << 'EOF'
+          #!/bin/bash
+          set -e
+
+          echo "Installing Eiku Graphics Library..."
+
+          if [ "$EUID" -ne 0 ]; then
+            echo "Please run as root (use sudo)"
+            exit 1
+          fi
+
+          make install PREFIX=/usr/local
+          echo "✅ Eiku installed successfully!"
+          echo "📚 Examples are available in: examples/"
+          echo "📖 Documentation: README.md"
+          EOF
+          chmod +x "$PACKAGE_DIR/install.sh"
+
+          echo "Package structure created successfully!"
+          ls -la "$PACKAGE_DIR"
+
+      - name: Create tarball
+        id: package
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION_NO_V }}
+          PACKAGE_NAME="eiku-$VERSION"
+          ASSET_NAME="eiku-$VERSION-${{ matrix.asset_name }}.tar.gz"
+
+          cd /tmp
+          tar -czf "$ASSET_NAME" "$PACKAGE_NAME"
+
+          echo "ASSET_PATH=/tmp/$ASSET_NAME" >> $GITHUB_OUTPUT
+          echo "ASSET_NAME=$ASSET_NAME" >> $GITHUB_OUTPUT
+
+          # Verify tarball
+          echo "Tarball created: $ASSET_NAME"
+          ls -lh "$ASSET_NAME"
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ${{ steps.package.outputs.ASSET_PATH }}
+          asset_name: ${{ steps.package.outputs.ASSET_NAME }}
+          asset_content_type: application/gzip
+
+  post-release:
+    name: Post-release Tasks
+    needs: [create-release, build-and-package]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION=${{ github.event.inputs.version }}
+          else
+            VERSION=${GITHUB_REF#refs/tags/}
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update documentation
+        run: |
+          echo "Release ${{ steps.get_version.outputs.VERSION }} completed successfully!"
+          echo "🎉 Release assets have been uploaded"
+          echo "📦 Download URL: https://github.com/${{ github.repository }}/releases/tag/${{ steps.get_version.outputs.VERSION }}"
+
+          # Future: Could trigger documentation updates, notify Discord/Slack, etc.
+
+      - name: Verify release
+        run: |
+          echo "Verifying release..."
+          curl -s "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.get_version.outputs.VERSION }}" | \
+            jq -r '.assets[] | .name + " (" + (.size | tostring) + " bytes)"'

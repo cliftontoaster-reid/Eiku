@@ -1,0 +1,78 @@
+# CodeQL Configuration for Eiku C Graphics Library
+# This configuration customizes CodeQL analysis for the Eiku project
+
+name: Eiku CodeQL Config
+
+# Define the scope of analysis
+paths:
+  - src/
+  - include/
+  - examples/
+
+# Exclude paths that should not be analyzed
+paths-ignore:
+  - target/
+  - build/
+  - tests/*.c
+  - "**/*.tmp"
+  - scripts/
+
+# Query configuration
+queries:
+  - name: security-extended
+    uses: security-extended
+  - name: security-and-quality
+    uses: security-and-quality
+
+# Disable some noisy queries that might not be relevant for a graphics library
+disable-default-queries: false
+
+query-filters:
+  # Disable specific queries by their ID
+  - exclude:
+      id: cpp/unused-local-variable
+
+  # Enable additional security queries
+  - include:
+      kind: problem
+      precision: high
+      severity: error
+
+# Language-specific configuration for C/C++
+languages:
+  - cpp
+
+# Build configuration
+build:
+  # Commands to run before analysis (if autobuild fails)
+  commands:
+    - make clean || true
+    - make all
+
+# Additional configuration for better analysis
+extraction:
+  cpp:
+    # Specify include paths for better symbol resolution
+    include_paths:
+      - include/
+      - src/
+      - /usr/include/X11
+
+    # Define preprocessor macros
+    defines:
+      - EIKU_VERSION_MAJOR=0
+      - EIKU_VERSION_MINOR=1
+      - EIKU_VERSION_PATCH=0
+
+    # Specify the C standard
+    standard: gnu17
+
+    # Additional compiler flags
+    compiler_flags:
+      - -Wall
+      - -Wextra
+      - -Werror
+      - -g
+      - -O2
+      - -pipe
+      - -fPIC

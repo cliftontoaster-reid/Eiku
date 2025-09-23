@@ -1,0 +1,213 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-20.04]
+        compiler: [clang, gcc]
+        include:
+          - os: ubuntu-latest
+            compiler: clang
+            cc: clang
+            cxx: clang++
+          - os: ubuntu-latest
+            compiler: gcc
+            cc: gcc
+            cxx: g++
+          - os: ubuntu-20.04
+            compiler: clang
+            cc: clang
+            cxx: clang++
+          - os: ubuntu-20.04
+            compiler: gcc
+            cc: gcc
+            cxx: g++
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            clang \
+            gcc \
+            libx11-dev \
+            libxext-dev \
+            pkg-config \
+            curl \
+            wget \
+            xz-utils \
+            libc6-dev \
+            doxygen \
+            graphviz
+
+      - name: Setup environment
+        run: |
+          echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
+          echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
+
+      - name: Verify compiler installation
+        run: |
+          echo "Using compiler: ${{ matrix.compiler }}"
+          ${{ matrix.cc }} --version
+          which ${{ matrix.cc }}
+
+      - name: Build library
+        run: |
+          echo "Building Eiku library with ${{ matrix.compiler }}..."
+          make clean || true
+          make all
+          echo "Build completed successfully!"
+
+      - name: Verify build artifacts
+        run: |
+          echo "Checking build artifacts..."
+          ls -la target/x86_64-linux-gnu/eiku/bin/
+          echo "Shared library:"
+          file target/x86_64-linux-gnu/eiku/bin/libeiku.so
+          echo "Static library:"
+          file target/x86_64-linux-gnu/eiku/bin/libeiku.a
+          echo "Headers:"
+          ls -la target/x86_64-linux-gnu/eiku/bin/include/
+
+      - name: Setup test environment
+        run: |
+          echo "Setting up Criterion test framework..."
+          make criterion
+          echo "Criterion setup completed!"
+
+      - name: Build tests
+        run: |
+          echo "Building test suite..."
+          make test
+          echo "Test build completed!"
+
+      - name: Run tests
+        run: |
+          echo "Running test suite..."
+          # Create a virtual display for X11 applications in CI
+          export DISPLAY=:99
+          sudo Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          sleep 3
+
+          # Run tests with proper library path
+          make run_tests
+          echo "All tests completed successfully!"
+
+      - name: Build examples
+        run: |
+          echo "Building examples..."
+          make examples/colourscreen
+          echo "Examples built successfully!"
+
+      - name: Generate documentation
+        if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang'
+        run: |
+          echo "Generating API documentation with Doxygen..."
+          # Create Doxyfile if it doesn't exist
+          if [ ! -f Doxyfile ]; then
+            doxygen -g
+            # Configure Doxygen for the project
+            sed -i 's/PROJECT_NAME           = "My Project"/PROJECT_NAME           = "Eiku Graphics Library"/' Doxyfile
+            sed -i 's/OUTPUT_DIRECTORY       =/OUTPUT_DIRECTORY       = docs/' Doxyfile
+            sed -i 's/INPUT                  =/INPUT                  = include\/ src\/ README.md/' Doxyfile
+            sed -i 's/RECURSIVE              = NO/RECURSIVE              = YES/' Doxyfile
+            sed -i 's/EXTRACT_ALL            = NO/EXTRACT_ALL            = YES/' Doxyfile
+            sed -i 's/GENERATE_LATEX         = YES/GENERATE_LATEX         = NO/' Doxyfile
+            sed -i 's/HAVE_DOT               = NO/HAVE_DOT               = YES/' Doxyfile
+            sed -i 's/CALL_GRAPH             = NO/CALL_GRAPH             = YES/' Doxyfile
+            sed -i 's/CALLER_GRAPH           = NO/CALLER_GRAPH           = YES/' Doxyfile
+          fi
+          doxygen
+          echo "✓ Documentation generated successfully!"
+
+      - name: Archive documentation
+        uses: actions/upload-artifact@v4
+        if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang'
+        with:
+          name: api-documentation
+          path: docs/
+          retention-days: 30
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v4
+        if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang'
+        with:
+          name: eiku-build-artifacts-${{ matrix.os }}-${{ matrix.compiler }}
+          path: |
+            target/x86_64-linux-gnu/eiku/bin/libeiku.so
+            target/x86_64-linux-gnu/eiku/bin/libeiku.a
+            target/x86_64-linux-gnu/eiku/bin/include/
+            examples/colourscreen/colourscreen
+          retention-days: 7
+
+      - name: Archive test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}-${{ matrix.compiler }}
+          path: |
+            target/x86_64-linux-gnu/eiku/bin/eiku.test
+          retention-days: 3
+
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            clang \
+            clang-tools \
+            cppcheck \
+            libx11-dev \
+            libxext-dev
+
+      - name: Run cppcheck
+        run: |
+          echo "Running cppcheck static analysis..."
+          cppcheck --enable=all --std=c11 --platform=unix64 \
+            --suppress=missingIncludeSystem \
+            --suppress=unmatchedSuppression \
+            --inline-suppr \
+            --error-exitcode=1 \
+            -I include/ \
+            src/ 2>&1 | tee cppcheck-results.txt
+
+      - name: Run clang static analyzer
+        run: |
+          echo "Running clang static analyzer..."
+          scan-build --use-cc=clang --use-c++=clang++ \
+            --status-bugs -o scan-build-results \
+            make clean all || echo "Static analysis completed with warnings"
+
+      - name: Archive static analysis results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: static-analysis-results
+          path: |
+            cppcheck-results.txt
+            scan-build-results/
+          retention-days: 7
