@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 13:51:45 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/22 14:06:08 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/22 23:40:30 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ EIKU_API t_eiku_window *eiku_new_window(t_eiku_context *ctx, int w, int h,
 	new_win->height = h;
 	new_win->title = strdup(t);
 	new_win->window = XCreateSimpleWindow(ctx->display, ctx->root, 0, 0, w, h,
-			1, BlackPixel(ctx->display, ctx->screen), WhitePixel(ctx->display,
+			0, BlackPixel(ctx->display, ctx->screen), WhitePixel(ctx->display,
 				ctx->screen));
 	if (!new_win->window)
 	{
