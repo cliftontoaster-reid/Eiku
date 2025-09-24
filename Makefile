@@ -129,6 +129,9 @@ dirs:
 
 clean:
 	$(RM) -r $(OBJ_DIR) $(DEP_DIR)
+# Clean examples
+	@$(foreach dir, $(wildcard examples/*), \
+		$(MAKE) -C $(dir) clean; )
 
 fclean: clean
 	$(RM) -r $(ORIGIN_DIR)

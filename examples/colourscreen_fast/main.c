@@ -218,6 +218,9 @@ int main(void) {
   // Cleanup
   printf("\n7. Cleaning up...\n");
   eiku_destroy_image(ctx, image);
+  printf("   ✓ Image buffer destroyed\n");
+  eiku_destroy_window(ctx, window);
+  printf("   ✓ Window cleared\n");
   eiku_destroy(ctx);
   printf("   ✓ Resources freed\n");
 

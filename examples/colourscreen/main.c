@@ -178,6 +178,8 @@ int main(void) {
 
   // Cleanup
   printf("\n5. Cleaning up...\n");
+  eiku_destroy_window(ctx, window);
+  printf("   ✓ Window destroyed\n");
   eiku_destroy(ctx);
   printf("   ✓ Resources freed\n");
 

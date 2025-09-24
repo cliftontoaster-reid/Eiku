@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 13:51:45 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/23 14:51:58 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/24 14:49:41 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ EIKU_API t_eiku_window *eiku_new_window(t_eiku_context *ctx, int w, int h,
   }
   new_win->width = w;
   new_win->height = h;
-  new_win->title = strdup(t);
 
   // Create window with the same visual as the context to avoid depth mismatches
   XSetWindowAttributes attrs;

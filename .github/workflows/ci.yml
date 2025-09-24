@@ -105,7 +105,7 @@ jobs:
       - name: Run tests
         run: |
           echo "Running test suite (Makefile provides Xvfb)..."
-          make run_tests
+          make run_tests MODE=release
           echo "All tests completed successfully!"
 
       - name: Build examples
@@ -113,6 +113,12 @@ jobs:
           echo "Building examples..."
           make examples
           echo "Examples built successfully!"
+
+      - name: Run examples inside Xvfb
+        run: |
+          echo "Running examples inside Xvfb..."
+          xvfb-run --auto-servernum --server-args='-screen 0 1024x768x$*' \
+            make examples/*
 
       - name: Generate documentation
         if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang'
