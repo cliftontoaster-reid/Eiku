@@ -31,7 +31,7 @@ endif
 
 # Project
 NAME    = eiku
-VERSION = 0.1.0
+VERSION = 0.1.0-exp.1
 PREFIX  ?= /usr/local
 DESTDIR ?=
 
@@ -157,24 +157,34 @@ $(CRITERION_INSTALL_DIR):
 
 test: criterion all $(TOBJ) $(TDEP)
 	@echo "Linking test units with Criterion..."
-	$(CC) -o $(BIN_DIR)/$(NAME).test $(TOBJ) -L$(BIN_DIR) -l$(NAME) -L$(CRITERION_INSTALL_DIR)/lib -lcriterion $(LDFLAGS)
+	$(CC) -o $(BIN_DIR)/$(NAME).test $(TOBJ) $(OBJ) -L$(CRITERION_INSTALL_DIR)/lib -lcriterion $(LDFLAGS) -lXtst
+
+run_test/%:
+	@echo "Running tests in virtual X11 display ($*-bit depth)..."
+	@export DISPLAY_DEPTH=$* && LD_LIBRARY_PATH=$(BIN_DIR):$(CRITERION_INSTALL_DIR)/lib xvfb-run --auto-servernum --server-args='-screen 0 1024x768x$*' $(BIN_DIR)/$(NAME).test --verbose
 
 run_tests: test
-	@echo "Running tests..."
-	@LD_LIBRARY_PATH=$(BIN_DIR):$(CRITERION_INSTALL_DIR)/lib $(BIN_DIR)/$(NAME).test
+	$(MAKE) run_test/24
+	@sleep 1
+	$(MAKE) run_test/16
+	@sleep 1
+	$(MAKE) run_test/15
+	@sleep 1
+	$(MAKE) run_test/8
+	@echo "All tests completed."
 
 examples: all
 	@echo "Building all examples..."
 	@$(foreach dir, $(wildcard examples/*), \
 		echo "Building example $(dir) ..."; \
-		$(MAKE) -C $(dir) all; )
+		$(MAKE) -C $(dir) all MODE="$(MODE)"; )
 	@echo "All examples built successfully!"
 
 # Run example by name examples/%
 examples/%: all
 	@echo "Building example $* ..."
+	@echo "Building example $* ..."
 	$(MAKE) -C examples/$* all
-	@echo "Running example $* ..."
 	$(MAKE) -C examples/$* run
 
 format:

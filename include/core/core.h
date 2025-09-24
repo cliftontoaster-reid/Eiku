@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 18:21:57 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/22 18:26:17 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/24 10:44:43 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,21 +186,6 @@ EIKU_API int eiku_hook(t_eiku_window *win, int x_event, int x_mask,
 EIKU_API int eiku_loop_hook(t_eiku_context *ctx, t_loop_hook hook, void *param);
 EIKU_API int eiku_loop(t_eiku_context *ctx);
 EIKU_API int eiku_loop_end(t_eiku_context *ctx);
-
-// Mouse functions
-EIKU_API int eiku_mouse_get_pos(t_eiku_context *ctx, t_eiku_window *win, int *x,
-                                int *y);
-EIKU_API int eiku_mouse_move(t_eiku_context *ctx, t_eiku_window *win, int x,
-                             int y);
-EIKU_API int eiku_mouse_hide(t_eiku_context *ctx, t_eiku_window *win);
-EIKU_API int eiku_mouse_show(t_eiku_context *ctx, t_eiku_window *win);
-
-// Keyboard functions
-EIKU_API int eiku_key_autorepeat_off(t_eiku_context *ctx);
-EIKU_API int eiku_key_autorepeat_on(t_eiku_context *ctx);
-
-// Event utility functions
-EIKU_API int eiku_flush_events(t_eiku_context *ctx);
 
 #ifdef EIKU_PLATFORM_LINUX
 // Internal X11 functions (equivalent to mlx_int_* functions)

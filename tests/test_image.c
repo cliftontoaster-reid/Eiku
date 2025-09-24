@@ -246,6 +246,9 @@ Test(image_functions, test_eiku_put_image_to_window_success) {
   char *data;
   int *pixels;
 
+  int display_depth =
+      atoi(getenv("DISPLAY_DEPTH") ? getenv("DISPLAY_DEPTH") : "24");
+
   int bpp, size_line, endian;
   ctx = create_test_context();
   // Disable shared memory to use regular XImages
@@ -256,21 +259,42 @@ Test(image_functions, test_eiku_put_image_to_window_success) {
   // Test image data access
   data = eiku_get_data_addr(image, &bpp, &size_line, &endian);
   cr_assert_not_null(data, "Image data should be accessible");
-  cr_assert_eq(bpp, 32, "Image should have 32 bits per pixel");
+  cr_assert(bpp == display_depth || bpp == 32,
+            "Image bpp should be %d or 32 bits per pixel", display_depth);
   cr_assert_gt(size_line, 0, "Size line should be positive");
   // Test that we can write to the image data
   if (bpp == 32) {
     pixels = (int *)data;
-    pixels[0] = 0xFF0000;  // Set first pixel to red
-    pixels[1] = 0x00FF00;  // Set second pixel to green
-    cr_assert_eq(pixels[0], 0xFF0000, "Should be able to write red pixel");
-    cr_assert_eq(pixels[1], 0x00FF00, "Should be able to write green pixel");
+    pixels[0] = 0xFFFF0000;  // Set first pixel to red (ARGB)
+    pixels[1] = 0xFF00FF00;  // Set second pixel to green (ARGB)
+    cr_assert_eq(pixels[0], (int)0xFFFF0000,
+                 "Should be able to write red pixel");
+    cr_assert_eq(pixels[1], (int)0xFF00FF00,
+                 "Should be able to write green pixel");
+  } else if (bpp == 24) {
+    // For 24-bit, assume RGB format
+    unsigned char *bytes = (unsigned char *)data;
+    // Red: R=FF, G=0, B=0
+    bytes[0] = 0xFF;
+    bytes[1] = 0x00;
+    bytes[2] = 0x00;
+    // Green: R=0, G=FF, B=0
+    bytes[3] = 0x00;
+    bytes[4] = 0xFF;
+    bytes[5] = 0x00;
+    cr_assert_eq(bytes[0], 0xFF, "Should be able to write red pixel R");
+    cr_assert_eq(bytes[1], 0x00, "Should be able to write red pixel G");
+    cr_assert_eq(bytes[2], 0x00, "Should be able to write red pixel B");
+    cr_assert_eq(bytes[3], 0x00, "Should be able to write green pixel R");
+    cr_assert_eq(bytes[4], 0xFF, "Should be able to write green pixel G");
+    cr_assert_eq(bytes[5], 0x00, "Should be able to write green pixel B");
   }
-  // Note: Skipping actual window display due to X11 compatibility issues in
-  // test environment
-  printf(
-      "Note: Skipping eiku_put_image_to_window()"
-      "- X11 display not available in test environment\n");
+
+  int result =
+      eiku_put_image_to_window(ctx, create_test_window(ctx), image, 0, 0);
+  cr_assert_eq(result, EIKU_SUCCESS,
+               "eiku_put_image_to_window() should succeed");
+  // Note: Actual display verification is not possible in this test environment
   // Clean up
   eiku_destroy_image(ctx, image);
   eiku_destroy(ctx);
@@ -363,29 +387,51 @@ Test(image_functions, test_eiku_pixel_put_invalid) {
 Test(image_functions, test_eiku_get_color_value) {
   t_eiku_context *ctx;
   int color_value;
+  int expected_black, expected_white, expected_red, expected_green,
+      expected_blue;
+
+  const char *depth_str = getenv("DISPLAY_DEPTH");
+  int display_depth = depth_str ? atoi(depth_str) : 24;
 
   ctx = create_test_context();
+
+  if (display_depth == 8) {
+    expected_black = 0x00;
+    expected_white = 0xFF;
+    expected_red = 0x07;
+    expected_green = 0x38;
+    expected_blue = 0xc0;
+  } else {
+    // Set expected values based on display depth
+    // For higher depths, assume ARGB format
+    expected_black = 0xFF000000;
+    expected_white = 0xFFFFFFFF;
+    expected_red = 0xFFFF0000;
+    expected_green = 0xFF00FF00;
+    expected_blue = 0xFF0000FF;
+  }
+
   // Test color conversion for basic colors
   color_value = eiku_get_color_value(ctx, 0x000000);  // Black
-  cr_assert(color_value == 0 || color_value == (int)0xFF000000,
-            "Black color should be 0 or 0xFF000000 and it is %x", color_value);
+  cr_assert_eq(color_value, expected_black, "Black color should be %x, got %x",
+               expected_black, color_value);
+
   color_value = eiku_get_color_value(ctx, 0xFFFFFF);  // White
-  cr_assert_eq(color_value, (int)0xFFFFFFFF,
-               "White color should be 0xFFFFFFFF, got"
-               "%x",
-               color_value);
+  cr_assert_eq(color_value, expected_white, "White color should be %x, got %x",
+               expected_white, color_value);
+
   color_value = eiku_get_color_value(ctx, 0xFF0000);  // Red
-  cr_assert_geq(color_value, (int)0xFFFF0000,
-                "Red color conversion should be non-negative and it is %x",
-                color_value);
+  cr_assert_eq(color_value, expected_red, "Red color should be %x, got %x",
+               expected_red, color_value);
+
   color_value = eiku_get_color_value(ctx, 0x00FF00);  // Green
-  cr_assert_geq(color_value, (int)0xFF00FF00,
-                "Green color conversion should be non-negative and it is %x",
-                color_value);
+  cr_assert_eq(color_value, expected_green, "Green color should be %x, got %x",
+               expected_green, color_value);
+
   color_value = eiku_get_color_value(ctx, 0x0000FF);  // Blue
-  cr_assert_geq(color_value, (int)0xFF0000FF,
-                "Blue color conversion should be non-negative and it is %x",
-                color_value);
+  cr_assert_eq(color_value, expected_blue, "Blue color should be %x, got %x",
+               expected_blue, color_value);
+
   // Test with null context
   color_value = eiku_get_color_value(NULL, 0xFF0000);
   cr_assert_eq(color_value, 0,
@@ -497,10 +543,10 @@ Test(image_functions, test_image_operations_integration) {
                  "Second row first pixel should be black (0+1 is odd)");
   }
 
-  // Note: Skipping actual display operations due to X11 environment limitations
-  printf(
-      "Note: Pattern creation successful "
-      "- skipping display due to test environment\n");
+  int result =
+      eiku_put_image_to_window(ctx, create_test_window(ctx), image, 0, 0);
+  cr_assert_eq(result, EIKU_SUCCESS,
+               "eiku_put_image_to_window() should succeed");
 
   // Clean up
   eiku_destroy_image(ctx, image);
