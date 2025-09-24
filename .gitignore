@@ -43,8 +43,11 @@ Thumbs.db
 *.d
 
 # Examples build artifacts
-examples/*/colourscreen
-examples/*/colourscreen_fast
+examples/colourscreen/colourscreen
+examples/colourscreen/colourscreen_fast
+examples/fakekeys_demo/fakekeys_demo
+examples/fakemouse_demo/fakemouse_demo
+
 
 examples/*/*.o
 
