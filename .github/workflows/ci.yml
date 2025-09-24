@@ -52,6 +52,7 @@ jobs:
             libx11-dev \
             libxext-dev \
             xvfb \
+            libxtst-dev \
             pkg-config \
             curl \
             wget \
@@ -180,7 +181,8 @@ jobs:
             clang-tools \
             cppcheck \
             libx11-dev \
-            libxext-dev
+            libxext-dev \
+            libxtst-dev
 
       - name: Run cppcheck
         run: |
