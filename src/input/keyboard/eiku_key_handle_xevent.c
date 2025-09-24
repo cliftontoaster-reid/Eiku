@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:39:05 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/24 02:19:08 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/24 14:25:21 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <X11/keysym.h>
 #include <string.h>
 
-static EIKU_INT int eiku_keycode_to_modifier(t_keycode keycode) {
+EIKU_INT int eiku_keycode_to_modifier(t_keycode keycode) {
   switch (keycode) {
     case EIKU_KEY_LCTRL:
     case EIKU_KEY_RCTRL:
