@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:39:05 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/24 01:57:29 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/24 02:19:08 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,9 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
+#include <string.h>
 
-static EIKU_INT eiku_keycode_to_modifier(t_keycode keycode) {
+static EIKU_INT int eiku_keycode_to_modifier(t_keycode keycode) {
   switch (keycode) {
     case EIKU_KEY_LCTRL:
     case EIKU_KEY_RCTRL:
@@ -64,10 +65,8 @@ EIKU_INT int eiku_key_handle_xevent(t_eiku_keyboard_state *state,
     } else {
       // Regular key pressed - handle text input
       char buffer[32];
-      KeySym sym;
-      Status status;
       int len =
-          XLookupString(&xevent->xkey, buffer, sizeof(buffer), &sym, NULL);
+          XLookupString(&xevent->xkey, buffer, sizeof(buffer), NULL, NULL);
       if (len > 0) {
         // Append to text buffer if space allows
         if (state->text_length + len < EIKU_KEY_BUFFER_SIZE) {

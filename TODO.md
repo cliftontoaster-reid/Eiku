@@ -80,7 +80,7 @@ Eiku is a lightweight 3D game engine written in pure C, inspired by early softwa
 
 #### 2.1 Keyboard Input
 
-- [ ] **Keyboard state management** (`include/input/keyboard.h`)
+- [x] **Keyboard state management** (`include/input/keyboard.h`)
   - Key state tracking (pressed, held, released)
   - Key code definitions and mapping
   - Modifier key support (Ctrl, Alt, Shift)
