@@ -51,6 +51,7 @@ jobs:
             gcc \
             libx11-dev \
             libxext-dev \
+            xvfb \
             pkg-config \
             curl \
             wget \
@@ -102,13 +103,7 @@ jobs:
 
       - name: Run tests
         run: |
-          echo "Running test suite..."
-          # Create a virtual display for X11 applications in CI
-          export DISPLAY=:99
-          sudo Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          sleep 3
-
-          # Run tests with proper library path
+          echo "Running test suite (Makefile provides Xvfb)..."
           make run_tests
           echo "All tests completed successfully!"
 
