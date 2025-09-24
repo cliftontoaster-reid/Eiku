@@ -105,7 +105,7 @@ jobs:
       - name: Run tests
         run: |
           echo "Running test suite (Makefile provides Xvfb)..."
-          make run_tests MODE=release
+          make re run_tests MODE=release
           echo "All tests completed successfully!"
 
       - name: Build examples
