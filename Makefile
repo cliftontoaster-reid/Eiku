@@ -159,13 +159,18 @@ test: criterion all $(TOBJ) $(TDEP)
 	@echo "Linking test units with Criterion..."
 	$(CC) -o $(BIN_DIR)/$(NAME).test $(TOBJ) $(OBJ) -L$(CRITERION_INSTALL_DIR)/lib -lcriterion $(LDFLAGS) -lXtst
 
+run_test/%:
+	@echo "Running tests in virtual X11 display ($*-bit depth)..."
+	@export DISPLAY_DEPTH=$* && LD_LIBRARY_PATH=$(BIN_DIR):$(CRITERION_INSTALL_DIR)/lib xvfb-run --auto-servernum --server-args='-screen 0 1024x768x$*' $(BIN_DIR)/$(NAME).test --verbose
+
 run_tests: test
-	@echo "Running tests in virtual X11 display (24-bit depth)..."
-	@export DISPLAY_DEPTH=24 && LD_LIBRARY_PATH=$(BIN_DIR):$(CRITERION_INSTALL_DIR)/lib xvfb-run --auto-servernum --server-args='-screen 0 1024x768x24' $(BIN_DIR)/$(NAME).test --verbose || exit 0
-	@echo "Running tests in virtual X11 display (16-bit depth)..."
-	@export DISPLAY_DEPTH=16 && LD_LIBRARY_PATH=$(BIN_DIR):$(CRITERION_INSTALL_DIR)/lib xvfb-run --auto-servernum --server-args='-screen 0 1024x768x16' $(BIN_DIR)/$(NAME).test --verbose || exit 0
-	@echo "Running tests in virtual X11 display (8-bit depth)..."
-	@export DISPLAY_DEPTH=8 && LD_LIBRARY_PATH=$(BIN_DIR):$(CRITERION_INSTALL_DIR)/lib xvfb-run --auto-servernum --server-args='-screen 0 1024x768x8' $(BIN_DIR)/$(NAME).test --verbose || exit 0
+	$(MAKE) run_test/24
+	@sleep 1
+	$(MAKE) run_test/16
+	@sleep 1
+	$(MAKE) run_test/15
+	@sleep 1
+	$(MAKE) run_test/8
 	@echo "All tests completed."
 
 examples: all
@@ -178,8 +183,8 @@ examples: all
 # Run example by name examples/%
 examples/%: all
 	@echo "Building example $* ..."
+	@echo "Building example $* ..."
 	$(MAKE) -C examples/$* all
-	@echo "Running example $* ..."
 	$(MAKE) -C examples/$* run
 
 format:

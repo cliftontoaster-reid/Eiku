@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 16:30:00 by copilot           #+#    #+#             */
-/*   Updated: 2025/09/24 12:38:52 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/09/24 13:24:17 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,6 +200,6 @@ Test(core_init, test_eiku_init_destroy_stress) {
     cr_assert_eq(result, EIKU_SUCCESS, "Context %d cleanup should succeed", i);
 
     // Small delay to prevent overwhelming X11 server in CI
-    usleep(1000);  // 1ms delay
+    usleep(2500);  // 2.5ms delay
   }
 }

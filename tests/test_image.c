@@ -289,11 +289,12 @@ Test(image_functions, test_eiku_put_image_to_window_success) {
     cr_assert_eq(bytes[4], 0xFF, "Should be able to write green pixel G");
     cr_assert_eq(bytes[5], 0x00, "Should be able to write green pixel B");
   }
-  // Note: Skipping actual window display due to X11 compatibility issues in
-  // test environment
-  printf(
-      "Note: Skipping eiku_put_image_to_window()"
-      "- X11 display not available in test environment\n");
+
+  int result =
+      eiku_put_image_to_window(ctx, create_test_window(ctx), image, 0, 0);
+  cr_assert_eq(result, EIKU_SUCCESS,
+               "eiku_put_image_to_window() should succeed");
+  // Note: Actual display verification is not possible in this test environment
   // Clean up
   eiku_destroy_image(ctx, image);
   eiku_destroy(ctx);
@@ -542,10 +543,10 @@ Test(image_functions, test_image_operations_integration) {
                  "Second row first pixel should be black (0+1 is odd)");
   }
 
-  // Note: Skipping actual display operations due to X11 environment limitations
-  printf(
-      "Note: Pattern creation successful "
-      "- skipping display due to test environment\n");
+  int result =
+      eiku_put_image_to_window(ctx, create_test_window(ctx), image, 0, 0);
+  cr_assert_eq(result, EIKU_SUCCESS,
+               "eiku_put_image_to_window() should succeed");
 
   // Clean up
   eiku_destroy_image(ctx, image);
