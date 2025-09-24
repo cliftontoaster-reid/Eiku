@@ -88,7 +88,7 @@ Eiku is a lightweight 3D game engine written in pure C, inspired by early softwa
 
 #### 2.2 Mouse Input
 
-- [ ] **Mouse state management** (`include/input/mouse.h`)
+- [x] **Mouse state management** (`include/input/mouse.h`)
   - Button state tracking
   - Mouse position and delta tracking
   - Mouse wheel support
