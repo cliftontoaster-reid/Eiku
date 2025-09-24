@@ -59,7 +59,8 @@ jobs:
             xz-utils \
             libc6-dev \
             doxygen \
-            graphviz
+            graphviz \
+            libxt-dev
 
       - name: Setup environment
         run: |
