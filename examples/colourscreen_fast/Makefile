@@ -5,6 +5,17 @@ CC = clang
 CFLAGS = -Wall -Wextra -Werror -g -std=gnu17 -O2
 LDFLAGS = -lm -lX11 -lXext
 
+MODE    ?= debug
+ifeq ($(MODE),release)
+	CFLAGS  += -O3 -g0 -D_FORTIFY_SOURCE=2
+	LDFLAGS += -Wl,-z,relro -Wl,-z,now
+else ifeq ($(MODE),debug)
+	CFLAGS  += -O0 -g3 -fstack-protector-strong -fstack-clash-protection -Warray-bounds -Wformat-security -fsanitize=address,undefined -fno-omit-frame-pointer
+	LDFLAGS += -fsanitize=address,undefined
+else
+	$(error "Invalid MODE specified: $(MODE). Use 'debug' or 'release'.")
+endif
+
 # Paths
 EIKU_LIB_DIR = ../../target/x86_64-linux-gnu/eiku/bin
 EIKU_INCLUDE_DIR = ../../include

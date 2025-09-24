@@ -177,7 +177,7 @@ examples: all
 	@echo "Building all examples..."
 	@$(foreach dir, $(wildcard examples/*), \
 		echo "Building example $(dir) ..."; \
-		$(MAKE) -C $(dir) all; )
+		$(MAKE) -C $(dir) all MODE="$(MODE)"; )
 	@echo "All examples built successfully!"
 
 # Run example by name examples/%
