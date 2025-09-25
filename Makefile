@@ -195,7 +195,7 @@ format:
 	@find $(SRC_DIR) $(INC_DIR) $(TEST_DIR) -type f \( -name '*.c' -o -name '*.h' \) -exec clang-format -i {} +
 	@echo "Source files formatted."
 
-compile_commands.json:
+compile_commands.json: Makefile $(SRC) $(INC)
 	@echo "Generating compile_commands.json ..."
 	@bear -- $(MAKE) fclean all CC=cc
 	@echo "compile_commands.json generated."
