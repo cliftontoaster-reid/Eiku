@@ -116,7 +116,7 @@ Eiku is a lightweight 3D game engine written in pure C, inspired by early softwa
 
 #### 3.2 Resource Manager
 
-- [ ] **Resource loading system** (`include/res/resource.h`)
+- [x] **Resource loading system** (`include/res/resource.h`)
   - Generic resource interface
   - Resource caching and lifetime management
   - Reference counting
