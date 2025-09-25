@@ -54,3 +54,5 @@ examples/*/*.o
 # Temporary files
 *.tmp
 *.log
+
+/compile_commands.json
