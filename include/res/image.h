@@ -73,7 +73,5 @@ EIKU_API int eiku_get_color_value(t_eiku_context *ctx, int color);
 
 // XPM image loading functions (optional - can be implemented later)
 EIKU_API t_eiku_image *eiku_xpm_file_to_image(t_eiku_context *ctx,
-                                              const char *filename, int *width,
-                                              int *height);
-EIKU_API t_eiku_image *eiku_xpm_to_image(t_eiku_context *ctx, char **xpm_data,
-                                         int *width, int *height);
+                                              const char *filename);
+EIKU_API t_eiku_image *eiku_xpm_to_image(t_eiku_context *ctx, char **xpm_data);
