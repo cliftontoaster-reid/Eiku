@@ -108,7 +108,7 @@ Eiku is a lightweight 3D game engine written in pure C, inspired by early softwa
 
 #### 3.1 File System
 
-- [ ] **File operations** (`include/res/filesystem.h`)
+- [x] **File operations** (`include/res/filesystem.h`)
   - File reading/writing utilities
   - Path manipulation and validation
   - Directory traversal
