@@ -67,6 +67,8 @@ EIKU_API int eiku_put_image_to_window(t_eiku_context *ctx, t_eiku_window *win,
                                       t_eiku_image *img, int x, int y);
 // Image-only pixel write: put pixel directly into image buffer
 EIKU_API int eiku_image_pixel_put(t_eiku_image *img, int x, int y, int color);
+// Returns the pixel color at (x, y) in the image in the RRGGBB format
+EIKU_API int eiku_image_pixel_get(t_eiku_image *img, int x, int y);
 
 // Color functions
 EIKU_API int eiku_get_color_value(t_eiku_context *ctx, int color);
@@ -75,3 +77,6 @@ EIKU_API int eiku_get_color_value(t_eiku_context *ctx, int color);
 EIKU_API t_eiku_image *eiku_xpm_file_to_image(t_eiku_context *ctx,
                                               const char *filename);
 EIKU_API t_eiku_image *eiku_xpm_to_image(t_eiku_context *ctx, char **xpm_data);
+
+EIKU_API int eiku_resize_image(t_eiku_context *ctx, t_eiku_image *img,
+                               int new_width, int new_height);
