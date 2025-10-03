@@ -377,39 +377,6 @@ Eiku is a lightweight 3D game engine written in pure C, inspired by early softwa
 - Memory usage profiling
 - Audio latency testing
 
-## Release Planning
-
-### v0.2.0 - Math & Input Foundation
-
-- Complete math library
-- Full input system
-- Enhanced examples
-
-### v0.3.0 - Resource & Scene Management
-
-- Resource loading system
-- Entity-Component-System
-- Scene management
-
-### v0.4.0 - Software Renderer
-
-- 3D rendering pipeline
-- Texture support
-- Lighting system
-
-### v0.5.0 - Audio & Shaders
-
-- Complete audio system
-- Shader framework
-- Advanced examples
-
-### v1.0.0 - Production Ready
-
-- Multi-platform support
-- Performance optimization
-- Complete documentation
-- Game template/demo
-
 ---
 
 **Note**: This roadmap is subject to change based on community feedback, technical challenges, and evolving requirements. The priority levels indicate the recommended order of implementation but can be adjusted based on specific project needs.

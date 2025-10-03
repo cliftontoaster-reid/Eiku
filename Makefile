@@ -15,14 +15,13 @@ else
 endif
 
 # Tools optimization
-## If 'zig cc' is available, use it as a drop-in replacement for 'clang'
-## If not check if clang is available, otherwise fallback to gcc
-ifneq (, $(shell which zig))
-	CC      = zig cc
-else ifneq (, $(shell which clang))
+## Prefer clang, fall back to gcc, then cc
+ifneq (, $(shell which clang))
 	CC      = clang
-else
+else ifneq (, $(shell which gcc))
 	CC      = gcc
+else
+	CC      = cc
 endif
 ## If mold is available, use it as a drop-in replacement for 'ld'
 ifneq (, $(shell which mold))
@@ -48,6 +47,13 @@ BIN_DIR      = $(TARGET_DIR)/bin
 TMP_DIR      = $(TARGET_DIR)/tmp
 SCRIPT_DIR   = scripts
 INC_DIR      = include
+
+
+## If ccache is available, use it to speed up recompilation, it should use TARGET_DIR/ccache as its cache directory
+ifneq (, $(shell which ccache))
+	export CCACHE_DIR = $(TARGET_DIR)/ccache
+	CC := ccache $(CC)
+endif
 
 # Source files
 SRC  := $(shell find $(SRC_DIR) -type f -name '*.c')
@@ -83,24 +89,33 @@ all: dirs $(SHARED) $(STATIC)
 
 -include $(DEP)
 
-install: all
+install:
+	$(MAKE) MODE=release CC=cc re
 # Install system wide
-	sudo install -D -m 755 $(SHARED) $(DESTDIR)$(PREFIX)/lib/lib$(NAME).so.$(VERSION)
-	sudo install -l $(DESTDIR)$(PREFIX)/lib/lib$(NAME).so.$(VERSION) $(DESTDIR)$(PREFIX)/lib/lib$(NAME).so
-	sudo install -D -m 644 $(STATIC) $(DESTDIR)$(PREFIX)/lib/lib$(NAME).a.$(VERSION)
-	sudo install -l $(DESTDIR)$(PREFIX)/lib/lib$(NAME).a.$(VERSION) $(DESTDIR)$(PREFIX)/lib/lib$(NAME).a
-	sudo mkdir -p $(DESTDIR)$(PREFIX)/include/$(NAME)
-	sudo install -m 644 $(INC_DIR)/*.h $(DESTDIR)$(PREFIX)/include/$(NAME)/
-	sudo install -m 644 $(SRC_DIR)/*.h $(DESTDIR)$(PREFIX)/include/$(NAME)/
+	sudo install -D -m 755 '$(SHARED)' '$(DESTDIR)$(PREFIX)/lib/lib$(NAME).so.$(VERSION)'
+	# Create/overwrite symlink to the versioned shared library
+	sudo ln -sf '$(DESTDIR)$(PREFIX)/lib/lib$(NAME).so.$(VERSION)' '$(DESTDIR)$(PREFIX)/lib/lib$(NAME).so'
+	sudo install -D -m 644 '$(STATIC)' '$(DESTDIR)$(PREFIX)/lib/lib$(NAME).a.$(VERSION)'
+	# Create/overwrite symlink to the versioned static library
+	sudo ln -sf '$(DESTDIR)$(PREFIX)/lib/lib$(NAME).a.$(VERSION)' '$(DESTDIR)$(PREFIX)/lib/lib$(NAME).a'
+	sudo mkdir -p '$(DESTDIR)$(PREFIX)/include/$(NAME)'
+	# Copy headers recursively, preserving filenames, permissions and subdirectories
+	@echo "Copying headers to '$(DESTDIR)$(PREFIX)/include/$(NAME)/' ..."
+	@sudo mkdir -p '$(DESTDIR)$(PREFIX)/include/$(NAME)/'
+	@sudo cp -a $(INC_DIR)/. '$(DESTDIR)$(PREFIX)/include/$(NAME)/'
+	@sudo chown -R root:root '$(DESTDIR)$(PREFIX)/include/$(NAME)/'
+	@sudo chmod -R 755 '$(DESTDIR)$(PREFIX)/include/$(NAME)/'
+	@echo "Headers copied."
+	@echo "Updating shared library cache..."
 	sudo ldconfig
 
 uninstall:
-# Uninstall system wide
-	sudo rm -f $(DESTDIR)$(PREFIX)/lib/$(NAME).so
-	sudo rm -f $(DESTDIR)$(PREFIX)/lib/$(NAME).so.$(VERSION)
-	sudo rm -f $(DESTDIR)$(PREFIX)/lib/lib$(NAME).a
-	sudo rm -f $(DESTDIR)$(PREFIX)/lib/lib$(NAME).a.$(VERSION)
-	sudo rm -rf $(DESTDIR)$(PREFIX)/include/$(NAME)
+	# Uninstall system wide
+	sudo rm -f '$(DESTDIR)$(PREFIX)/lib/lib$(NAME).so'
+	sudo rm -f '$(DESTDIR)$(PREFIX)/lib/lib$(NAME).so.$(VERSION)'
+	sudo rm -f '$(DESTDIR)$(PREFIX)/lib/lib$(NAME).a'
+	sudo rm -f '$(DESTDIR)$(PREFIX)/lib/lib$(NAME).a.$(VERSION)'
+	sudo rm -rf '$(DESTDIR)$(PREFIX)/include/$(NAME)'
 	sudo ldconfig
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
@@ -185,7 +200,6 @@ examples: all
 
 # Run example by name examples/%
 examples/%: all
-	@echo "Building example $* ..."
 	@echo "Building example $* ..."
 	$(MAKE) -C examples/$* all
 	$(MAKE) -C examples/$* run
