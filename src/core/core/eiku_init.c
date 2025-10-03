@@ -6,12 +6,13 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 01:00:00 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/23 14:51:58 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/10/03 12:06:45 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "core/core.h"
 #include "core/platform.h"
+#include "res/resource.h"
 
 #ifdef EIKU_PLATFORM_LINUX
 
@@ -68,6 +69,13 @@ EIKU_API t_eiku_context *eiku_init(void) {
   // Set up window manager atoms
   ctx->wm_delete_window = XInternAtom(ctx->display, "WM_DELETE_WINDOW", False);
   ctx->wm_protocols = XInternAtom(ctx->display, "WM_PROTOCOLS", False);
+  // Initialize resource manager
+  ctx->res_manager = eiku_res_manager_init();
+  if (!ctx->res_manager) {
+    XCloseDisplay(ctx->display);
+    free(ctx);
+    return (NULL);
+  }
   // Initialize other fields
   ctx->win_list = NULL;
   ctx->loop_hook = NULL;

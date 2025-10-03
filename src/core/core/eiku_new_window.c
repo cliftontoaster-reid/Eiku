@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 13:51:45 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/24 14:49:41 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/10/03 15:48:15 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #endif
-
-EIKU_API bool eiku_window_set_title(t_eiku_context *ctx, t_eiku_window *win,
-                                    const char *title) {
-#ifdef EIKU_PLATFORM_LINUX
-  if (!ctx || !win || !title) {
-    return (false);
-  }
-  XStoreName(ctx->display, win->window, title);
-#else
-  (void)ctx;
-  (void)win;
-  (void)title;
-  return (false);
-#endif
-  win->title = strdup(title);
-  return (win->title != NULL);
-}
 
 EIKU_API t_eiku_window *eiku_new_window(t_eiku_context *ctx, int w, int h,
                                         const char *t) {

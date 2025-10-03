@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 00:18:48 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/22 00:22:08 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/10/03 15:48:15 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@
 
 static inline void compute_red_shift_bits(unsigned long rm, int *r_shift,
                                           int *r_bits) {
+  if (rm == 0) {
+    *r_shift = 0;
+    *r_bits = 0;
+    return;
+  }
   while (!(rm & 1UL)) {
     rm >>= 1;
     (*r_shift)++;
@@ -29,6 +34,11 @@ static inline void compute_red_shift_bits(unsigned long rm, int *r_shift,
 
 static inline void compute_green_shift_bits(unsigned long gm, int *g_shift,
                                             int *g_bits) {
+  if (gm == 0) {
+    *g_shift = 0;
+    *g_bits = 0;
+    return;
+  }
   while (!(gm & 1UL)) {
     gm >>= 1;
     (*g_shift)++;
@@ -41,6 +51,11 @@ static inline void compute_green_shift_bits(unsigned long gm, int *g_shift,
 
 static inline void compute_blue_shift_bits(unsigned long bm, int *b_shift,
                                            int *b_bits) {
+  if (bm == 0) {
+    *b_shift = 0;
+    *b_bits = 0;
+    return;
+  }
   while (!(bm & 1UL)) {
     bm >>= 1;
     (*b_shift)++;

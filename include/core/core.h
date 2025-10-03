@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 18:21:57 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/24 10:44:43 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/10/03 12:06:45 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@
 // Forward declarations
 typedef struct s_eiku_context t_eiku_context;
 typedef struct s_eiku_window t_eiku_window;
+typedef struct s_res_manager t_res_manager;
 
 // Event callback types
 typedef int (*t_event_hook)(void *param);
@@ -119,6 +120,9 @@ typedef struct s_eiku_context {
   Visual *visual;
   Colormap cmap;
   int private_cmap;
+
+  // Resource management
+  t_res_manager *res_manager;
 
   // Window management
   t_eiku_window *win_list;

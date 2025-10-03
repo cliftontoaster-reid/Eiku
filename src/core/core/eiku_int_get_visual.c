@@ -6,7 +6,7 @@
 /*   By: lfiorell@student.42nice.fr <lfiorell>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 23:13:48 by lfiorell@st       #+#    #+#             */
-/*   Updated: 2025/09/22 00:08:19 by lfiorell@st      ###   ########.fr       */
+/*   Updated: 2025/10/03 15:48:15 by lfiorell@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,12 @@ int eiku_int_get_visual(t_eiku_context *ctx) {
   if (!ctx || !ctx->display) return (EIKU_ERROR_DISPLAY_FAILED);
   screen = DefaultScreen(ctx->display);
   if (try_preferred_visual(ctx, screen) == EIKU_SUCCESS) return (EIKU_SUCCESS);
-  return (try_fallback_visual(ctx, screen));
+  if (try_fallback_visual(ctx, screen) == EIKU_SUCCESS) return (EIKU_SUCCESS);
+  // If no TrueColor visual found, use default
+  ctx->visual = DefaultVisual(ctx->display, screen);
+  ctx->depth = DefaultDepth(ctx->display, screen);
+  ctx->private_cmap = 0;
+  return (EIKU_SUCCESS);
 }
 
 #endif

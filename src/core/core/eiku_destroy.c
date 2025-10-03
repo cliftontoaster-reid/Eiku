@@ -13,6 +13,7 @@
 
 #include "core/core.h"
 #include "core/platform.h"
+#include "res/resource.h"
 
 #ifdef EIKU_PLATFORM_LINUX
 
@@ -48,6 +49,11 @@ EIKU_API int eiku_destroy(t_eiku_context *ctx) {
     XSync(ctx->display, False);
     XCloseDisplay(ctx->display);
     ctx->display = NULL;
+  }
+  // Free resource manager
+  if (ctx->res_manager) {
+    eiku_res_manager_free(ctx->res_manager);
+    ctx->res_manager = NULL;
   }
   free(ctx);
 #endif
